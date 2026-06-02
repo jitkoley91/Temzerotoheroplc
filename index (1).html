@@ -1,0 +1,3934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zero to Hero | TechEdge Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+/* ── RESET ── */
+:root{
+  --bg:#f0f4f9;--glass:rgba(255,255,255,0.92);--glass2:rgba(255,255,255,0.98);
+  --bdr:rgba(0,100,220,0.13);--bdr2:rgba(0,100,220,0.25);
+  --blue:#0070e0;--orange:#f05a00;--cyan:#0090c8;--green:#00a84f;
+  --red:#d92b3a;--purple:#7c3aed;--gold:#c8860a;
+  --text:#4a6280;--bright:#0d1b2e;--dim:rgba(0,100,220,0.05);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,80,180,0.025) 3px,rgba(0,80,180,0.025) 4px);pointer-events:none;z-index:99999;}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
+
+/* ── LAYOUT ── */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:56px;flex-shrink:0;
+  background:rgba(255,255,255,0.97);border-bottom:1px solid rgba(0,100,220,0.12);backdrop-filter:blur(20px);box-shadow:0 1px 12px rgba(0,80,180,0.08);
+}
+/* ── TEM LOGO ── */
+.te-logo{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none;}
+
+/* Badge container */
+#tem-badge{
+  position:relative;width:42px;height:42px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* The letters T E M inside the badge */
+#tem-letters{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;
+  letter-spacing:0;line-height:1;position:relative;z-index:2;
+  display:flex;gap:0;
+}
+#tem-t{color:var(--blue);}
+#tem-e{color:var(--orange);}
+#tem-m{color:var(--blue);}
+
+/* Brand text block */
+.te-brand{display:flex;flex-direction:column;gap:1px;}
+.te-name{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:0.5px;line-height:1;
+  display:flex;align-items:baseline;gap:0;
+}
+.te-n1{color:var(--blue);}
+.te-n2{color:var(--text);font-weight:600;}
+.te-n3{color:var(--orange);}
+.te-tagline{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(74,98,128,0.6);letter-spacing:2.5px;text-transform:uppercase;}
+
+/* ── ANIMATION KEYFRAMES — 10 variants ── */
+
+/* 1. Pulse ring */
+@keyframes tem-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,112,224,0.4),0 0 0 0 rgba(240,90,0,0.2);}
+  50%{box-shadow:0 0 0 6px rgba(0,112,224,0),0 0 0 10px rgba(240,90,0,0);}
+}
+/* 2. Spin border */
+@keyframes tem-spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+/* 3. Morph border-radius */
+@keyframes tem-morph{
+  0%,100%{border-radius:8px;}
+  25%{border-radius:50% 8px 50% 8px;}
+  50%{border-radius:50%;}
+  75%{border-radius:8px 50% 8px 50%;}
+}
+/* 4. Glitch */
+@keyframes tem-glitch-1{
+  0%,100%{clip-path:inset(0 0 100% 0);transform:translate(0);}
+  10%{clip-path:inset(20% 0 50% 0);transform:translate(-2px,1px);}
+  20%{clip-path:inset(60% 0 10% 0);transform:translate(2px,-1px);}
+  30%{clip-path:inset(0 0 0 0);transform:translate(0);}
+}
+/* 5. Float */
+@keyframes tem-float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-4px);}
+}
+/* 6. Shake / electric */
+@keyframes tem-shake{
+  0%,100%{transform:translate(0,0) rotate(0);}
+  10%{transform:translate(-1px,1px) rotate(-0.5deg);}
+  20%{transform:translate(1px,-1px) rotate(0.5deg);}
+  30%{transform:translate(-1px,0) rotate(0);}
+  40%{transform:translate(1px,1px) rotate(0.5deg);}
+  50%{transform:translate(0,-1px) rotate(-0.5deg);}
+  60%,90%{transform:translate(0,0) rotate(0);}
+}
+/* 7. Scale breathe */
+@keyframes tem-breathe{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.08);}
+}
+/* 8. Colour cycle */
+@keyframes tem-hue{
+  0%{filter:hue-rotate(0deg);}
+  100%{filter:hue-rotate(360deg);}
+}
+/* 9. Neon flicker */
+@keyframes tem-flicker{
+  0%,19%,21%,23%,100%{opacity:1;}
+  20%,22%{opacity:0.4;}
+  50%{opacity:0.9;}
+  52%{opacity:0.5;}
+  54%{opacity:1;}
+}
+/* 10. Bounce */
+@keyframes tem-bounce{
+  0%,100%{transform:translateY(0) scaleY(1);}
+  40%{transform:translateY(-6px) scaleY(1.05);}
+  60%{transform:translateY(-3px) scaleY(0.97);}
+  80%{transform:translateY(-1px) scaleY(1);}
+}
+/* Spinning ring element */
+@keyframes tem-ring-spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+@keyframes tem-ring-spin-r{0%{transform:rotate(0deg);}100%{transform:rotate(-360deg);}}
+/* Letter stagger */
+@keyframes tem-letter-in{
+  0%{opacity:0;transform:translateY(8px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.hdr-center{display:flex;align-items:center;gap:8px;min-width:0;flex:1;justify-content:center;}
+.progress-track{display:flex;align-items:center;gap:4px;background:rgba(0,100,220,0.04);border:1px solid rgba(0,100,220,0.15);border-radius:20px;padding:5px 14px;}
+.prog-step{width:7px;height:7px;border-radius:50%;border:1px solid rgba(0,100,220,0.2);background:transparent;cursor:pointer;transition:all .3s;}
+.prog-step.done{background:rgba(0,100,220,0.35);}
+.prog-step.active{background:var(--blue);box-shadow:0 0 6px rgba(0,112,224,0.5);border-color:var(--blue);}
+.prog-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,144,255,0.5);margin-left:8px;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.xp-wrap{display:flex;align-items:center;gap:8px;}
+.xp-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--orange);}
+.xp-bar{width:100px;height:4px;background:rgba(0,100,220,0.1);border-radius:2px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--orange),#ffaa00);border-radius:2px;transition:width .6s ease;width:0%;}
+.btn-map{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 16px;border-radius:4px;cursor:pointer;border:1px solid rgba(0,100,220,0.25);background:rgba(0,100,220,0.07);color:var(--blue);transition:all .22s;}
+.btn-map:hover{background:rgba(0,100,220,0.14);border-color:var(--blue);}
+
+/* ── MAIN STACK ── */
+main{
+  position:relative;flex:1;overflow:hidden;
+}
+
+/* ── VIEWS — position:absolute stack, show/hide via .active ── */
+.view{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+  z-index:1;
+}
+.view::-webkit-scrollbar{width:3px;}
+.view::-webkit-scrollbar-thumb{background:rgba(0,144,255,0.2);}
+.view.active{
+  opacity:1;pointer-events:all;
+  animation:fadeUp .35s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── HOME VIEW ── */
+#v-home .home-inner{
+  min-height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:40px 24px;
+  box-sizing:border-box;
+}
+.hero-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--orange);letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;border:1px solid rgba(240,90,0,0.25);padding:5px 18px;border-radius:20px;background:rgba(240,90,0,0.07);}
+.hero-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(44px,7vw,88px);line-height:0.9;text-align:center;margin-bottom:16px;}
+.hero-title .zero{color:rgba(157,194,220,0.35);}
+.hero-title .to{color:rgba(157,194,220,0.5);font-size:0.5em;display:block;letter-spacing:4px;margin:10px 0;}
+.hero-title .hero-word{background:linear-gradient(135deg,var(--blue) 0%,var(--cyan) 40%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:16px;color:var(--text);text-align:center;max-width:600px;line-height:1.7;margin-bottom:36px;}
+.hero-stats{display:flex;gap:32px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;}
+.stat{text-align:center;}
+.stat-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:34px;color:var(--bright);line-height:1;}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px;margin-top:4px;}
+.stat-div{width:1px;background:var(--bdr);}
+.btn-start{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;text-transform:uppercase;padding:14px 48px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,var(--blue),#0060cc);border:none;color:#fff;box-shadow:0 0 20px rgba(0,100,220,0.25),0 4px 16px rgba(0,80,180,0.2);transition:all .25s;position:relative;overflow:hidden;}
+.btn-start::after{content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:rgba(255,255,255,0.15);transform:skewX(-20deg);animation:shine 3s infinite;}
+@keyframes shine{0%,100%{left:-60%;}50%{left:120%;}}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(0,100,220,0.35),0 8px 20px rgba(0,80,180,0.25);}
+.home-path{display:flex;align-items:center;gap:6px;margin-top:36px;flex-wrap:wrap;justify-content:center;}
+.hp-node{display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;}
+.hp-arr{color:rgba(0,144,255,0.3);font-size:14px;}
+
+/* ── MAP VIEW ── */
+#v-map .map-inner{padding:20px 24px 24px;}
+.map-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--bright);margin-bottom:4px;}
+.map-sub{font-size:12px;color:var(--text);margin-bottom:20px;}
+.road{position:relative;}
+.road-line{position:absolute;left:38px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,rgba(0,100,220,0.15),rgba(0,100,220,0.35),rgba(200,134,10,0.3),rgba(200,134,10,0.1));}
+.tier{display:flex;gap:0;margin-bottom:20px;position:relative;}
+.tier-badge{width:76px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:14px;position:relative;z-index:2;}
+.tier-dot{width:20px;height:20px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:9px;background:#fff;margin-bottom:6px;}
+.tier-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+.tier-modules{flex:1;display:flex;flex-wrap:wrap;gap:12px;padding:0 0 0 12px;}
+.mcard{background:#ffffff;border:1px solid rgba(0,100,220,0.12);border-radius:10px;padding:16px;flex:1;min-width:220px;max-width:340px;cursor:pointer;transition:all .28s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,80,180,0.06);}
+.mcard:hover:not(.mlocked){border-color:rgba(0,100,220,0.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,80,180,0.15),0 0 0 1px rgba(0,100,220,0.1);}
+.mcard.mlocked{cursor:default;opacity:0.4;filter:grayscale(0.7);}
+.mcard.mdone{border-color:rgba(0,168,79,0.3);background:rgba(240,252,246,0.9);}
+.mc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.mc-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.mc-info{flex:1;}
+.mc-tier-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.mc-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--bright);line-height:1.2;}
+.mc-desc{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:10px;}
+.mc-footer{display:flex;align-items:center;justify-content:space-between;}
+.mc-time{font-family:'Share Tech Mono',monospace;font-size:10px;color:#8aabcc;}
+.mc-status{display:flex;align-items:center;gap:4px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── MODULE VIEW ── */
+#v-module .mod-inner{padding:20px 24px calc(80px + env(safe-area-inset-bottom, 0px));}
+.mod-crumb{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,144,255,0.5);letter-spacing:1px;margin-bottom:14px;cursor:pointer;}
+.mod-crumb:hover{color:var(--cyan);}
+.mod-header{background:#ffffff;border:1px solid rgba(0,100,220,0.1);border-radius:10px;padding:20px;margin-bottom:16px;display:flex;align-items:flex-start;gap:16px;box-shadow:0 2px 10px rgba(0,80,180,0.07);}
+.mod-icon{font-size:42px;flex-shrink:0;}
+.mod-meta{flex:1;}
+.mod-tier-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px;margin-bottom:8px;}
+.mod-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--bright);line-height:1.1;margin-bottom:4px;}
+.mod-desc-text{font-size:13px;color:var(--text);line-height:1.6;}
+.mod-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.pill{padding:3px 12px;border-radius:20px;font-size:11px;border:1px solid rgba(255,255,255,0.08);color:var(--text);}
+.lesson-section{background:#ffffff;border:1px solid rgba(0,100,220,0.1);border-radius:10px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,80,180,0.05);}
+.ls-head{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.ls-head::before{content:'';width:3px;height:16px;background:var(--cyan);border-radius:2px;flex-shrink:0;}
+.ls-head.ora{color:var(--orange);}.ls-head.ora::before{background:var(--orange);}
+.ls-head.grn{color:var(--green);}.ls-head.grn::before{background:var(--green);}
+.ls-head.purp{color:var(--purple);}.ls-head.purp::before{background:var(--purple);}
+.ls-body{font-size:13px;line-height:1.75;color:var(--text);}
+.ls-body strong{color:var(--bright);}
+
+/* ── QUIZ CTA BAR — lives OUTSIDE views, controlled by JS ── */
+#quiz-cta{
+  position:absolute;bottom:0;left:0;right:0;z-index:50;
+  padding:12px 24px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+  background:rgba(255,255,255,0.97);border-top:1px solid rgba(0,100,220,0.12);
+  backdrop-filter:blur(16px);
+  box-shadow:0 -2px 12px rgba(0,80,180,0.08);
+  display:none;align-items:center;justify-content:space-between;
+  animation:slideUp .25s ease;
+}
+#quiz-cta.show{display:flex;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.btn-quiz{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 32px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,var(--orange),#ff9900);border:none;color:#fff;box-shadow:0 4px 16px rgba(255,122,0,0.35);transition:all .22s;}
+.btn-quiz:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,122,0,0.5);}
+.btn-back{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border-radius:6px;cursor:pointer;background:transparent;border:1px solid rgba(0,100,220,0.2);color:var(--text);transition:all .22s;}
+.btn-back:hover{border-color:var(--blue);color:var(--blue);}
+.cta-info-txt{font-family:'Share Tech Mono',monospace;font-size:10px;color:#90afc8;}
+
+/* ── QUIZ VIEW ── */
+#v-quiz .quiz-inner{padding:20px 24px;display:flex;flex-direction:column;align-items:center;min-height:100%;background:var(--bg);}
+.qwrap{width:100%;max-width:680px;}
+.q-mod-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.q-prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.q-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .4s ease;border-radius:2px;}
+.qcard{background:#ffffff;border:1px solid rgba(0,100,220,0.12);border-radius:12px;padding:24px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,80,180,0.07);}
+.q-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,144,255,0.5);letter-spacing:1px;margin-bottom:10px;}
+.q-text{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:20px;color:var(--bright);line-height:1.35;margin-bottom:18px;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.qopt{padding:12px 16px;border:1px solid rgba(0,100,220,0.12);border-radius:8px;cursor:pointer;font-size:13px;line-height:1.4;transition:all .2s;background:#f8fafd;display:flex;align-items:flex-start;gap:10px;}
+.qopt:hover:not(.locked){border-color:rgba(0,100,220,0.35);background:rgba(0,100,220,0.06);color:var(--bright);}
+.qopt.correct{border-color:var(--green);background:rgba(0,168,79,0.08);color:var(--green);}
+.qopt.wrong{border-color:var(--red);background:rgba(217,43,58,0.07);color:var(--red);}
+.qopt.locked{cursor:default;}
+.q-letter{font-family:'Share Tech Mono',monospace;font-size:11px;opacity:0.5;flex-shrink:0;margin-top:1px;}
+.q-feedback{padding:12px 15px;border-radius:8px;font-size:12px;line-height:1.65;margin-top:10px;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:rgba(0,168,79,0.07);color:var(--green);border:1px solid rgba(0,168,79,0.2);}
+.q-feedback.bad{background:rgba(217,43,58,0.07);color:var(--red);border:1px solid rgba(217,43,58,0.2);}
+.q-nav{display:flex;justify-content:flex-end;margin-top:12px;}
+.btn-next-q{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:9px 24px;border-radius:5px;cursor:pointer;background:var(--blue);border:none;color:#fff;transition:all .2s;}
+.btn-next-q:hover{box-shadow:0 4px 14px rgba(0,144,255,0.4);}
+
+/* ── SCORE SCREEN ── */
+.score-screen{text-align:center;padding:40px 20px;}
+.score-ring{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;position:relative;border:3px solid rgba(0,100,220,0.1);}
+.score-ring-inner{position:relative;z-index:1;background:#ffffff;width:98px;height:98px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(0,100,220,0.12);box-shadow:0 4px 20px rgba(0,80,180,0.1);}
+.score-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:44px;line-height:1;color:var(--bright);}
+.score-denom{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);}
+.score-grade{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--blue);margin-bottom:6px;}
+.score-msg{font-size:14px;color:var(--text);margin-bottom:24px;}
+.score-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-retry{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:10px 24px;border-radius:5px;cursor:pointer;background:transparent;border:1px solid rgba(0,100,220,0.2);color:var(--text);transition:all .2s;}
+.btn-retry:hover{border-color:var(--blue);color:var(--blue);}
+.btn-continue{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:10px 28px;border-radius:5px;cursor:pointer;background:linear-gradient(135deg,var(--green),#00bb60);border:none;color:var(--bg);transition:all .2s;}
+.btn-continue:hover{box-shadow:0 4px 16px rgba(46,232,138,0.4);}
+
+/* ── CERT VIEW ── */
+#v-cert .cert-inner{
+  min-height:100%;display:flex;align-items:center;justify-content:center;
+  padding:30px;position:relative;overflow:visible;
+}
+/* confetti canvas sits inside cert-inner */
+#cert-canvas{position:absolute;inset:0;pointer-events:none;z-index:0;}
+
+/* main certificate card */
+.cert-card{
+  position:relative;z-index:2;
+  width:100%;max-width:720px;
+  background:linear-gradient(160deg,#fdfbf4 0%,#fff9ea 50%,#fdfbf4 100%);
+  border:none;border-radius:4px;
+  box-shadow:
+    0 0 0 1px rgba(255,213,0,0.5),
+    0 0 0 6px rgba(255,213,0,0.07),
+    0 0 0 7px rgba(255,213,0,0.3),
+    0 0 60px rgba(255,213,0,0.2),
+    0 20px 60px rgba(0,0,0,0.7);
+  overflow:hidden;
+}
+/* gold shimmer sweep */
+.cert-card::before{
+  content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(105deg,transparent 40%,rgba(200,160,0,0.10) 50%,transparent 60%);
+  animation:certShimmer 4s ease infinite;z-index:0;pointer-events:none;
+}
+@keyframes certShimmer{0%,100%{left:-120%;}50%{left:160%;}}
+
+/* TOP BANNER RIBBON */
+.cert-ribbon-top{
+  width:100%;background:linear-gradient(90deg,#8b6200,#ffd500,#ffec6e,#ffd500,#8b6200);
+  padding:10px 0;text-align:center;position:relative;z-index:2;
+}
+.cert-ribbon-top-text{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:6px;text-transform:uppercase;color:#0d1b2e;
+}
+/* BOTTOM BANNER RIBBON */
+.cert-ribbon-bot{
+  width:100%;background:linear-gradient(90deg,#8b6200,#ffd500,#ffec6e,#ffd500,#8b6200);
+  padding:8px 0;text-align:center;position:relative;z-index:2;
+}
+.cert-ribbon-bot-text{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:4px;color:#0d1b2e;
+}
+
+/* INNER BODY */
+.cert-body{
+  padding:30px 50px 28px;text-align:center;position:relative;z-index:5;
+}
+
+/* SVG border frame inside the card */
+.cert-frame{
+  position:absolute;inset:42px 0 42px 0;pointer-events:none;z-index:1;
+}
+
+/* CORNER ORNAMENTS */
+.cert-corner{position:absolute;width:56px;height:56px;z-index:3;}
+.cert-corner.tl{top:42px;left:0;}
+.cert-corner.tr{top:42px;right:0;transform:scaleX(-1);}
+.cert-corner.bl{bottom:42px;left:0;transform:scaleY(-1);}
+.cert-corner.br{bottom:42px;right:0;transform:scale(-1,-1);}
+
+/* SEAL */
+.cert-seal-wrap{
+  display:flex;align-items:center;justify-content:center;
+  margin:16px 0 10px;
+}
+.cert-seal{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,#8b6200,#ffd500 40%,#ffec6e 60%,#ffd500,#8b6200);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 3px rgba(255,213,0,0.2),0 0 24px rgba(255,213,0,0.35),inset 0 0 12px rgba(0,0,0,0.3);
+  animation:sealPulse 3s ease infinite;position:relative;
+  flex-shrink:0;
+}
+@keyframes sealPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,213,0,0.2),0 0 24px rgba(255,213,0,0.35),inset 0 0 12px rgba(0,0,0,0.3);}50%{box-shadow:0 0 0 5px rgba(255,213,0,0.15),0 0 40px rgba(255,213,0,0.55),inset 0 0 12px rgba(0,0,0,0.3);}}
+.cert-seal-inner{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,#fdfbf4,#fff8e0);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:2px solid rgba(255,213,0,0.4);
+}
+.cert-seal-icon{font-size:26px;line-height:1;}
+.cert-seal-text{font-family:'Share Tech Mono',monospace;font-size:7px;color:#a06800;letter-spacing:1px;margin-top:2px;}
+
+/* CERTIFICATE TEXT */
+.cert-of{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,213,0,0.55);letter-spacing:4px;text-transform:uppercase;margin-bottom:5px;}
+.cert-main-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:clamp(36px,5vw,56px);line-height:1;
+  background:linear-gradient(135deg,#c8920a,#ffd500 35%,#fff5b0 50%,#ffd500 65%,#c8920a);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:14px;letter-spacing:2px;
+  filter:drop-shadow(0 0 10px rgba(255,213,0,0.4));
+}
+.cert-divider{
+  display:flex;align-items:center;gap:10px;margin:12px 0;
+}
+.cert-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,213,0,0.4),transparent);}
+.cert-divider-diamond{color:var(--gold);font-size:9px;}
+
+.cert-awarded{font-size:12px;color:#7a8fa8;letter-spacing:1px;margin-bottom:8px;}
+.cert-course{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--bright);
+  margin-bottom:4px;
+}
+.cert-sub-course{font-size:13px;color:#8a9eb8;margin-bottom:16px;}
+
+/* STATS ROW */
+.cert-stats{display:flex;justify-content:center;gap:0;margin:16px 0;}
+.cert-stat{
+  flex:1;max-width:120px;
+  padding:10px 6px;text-align:center;
+  border:1px solid rgba(200,134,10,0.18);
+  background:rgba(200,134,10,0.05);
+}
+.cert-stat:first-child{border-radius:6px 0 0 6px;}
+.cert-stat:last-child{border-radius:0 6px 6px 0;}
+.cert-stat-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--gold);}
+.cert-stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:#8aabcc;letter-spacing:1px;margin-top:2px;}
+
+/* CERT ID + BUTTONS */
+.cert-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(100,130,160,0.5);letter-spacing:2px;margin-top:12px;}
+.cert-btns{display:flex;gap:10px;justify-content:center;margin-top:18px;position:relative;z-index:10;}
+
+/* ── LESSON UTILITY COMPONENTS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:800px){.g3,.g4{grid-template-columns:1fr 1fr;}.g2{grid-template-columns:1fr;}}
+
+.ic{background:rgba(0,100,220,0.04);border:1px solid rgba(0,100,220,0.12);border-radius:8px;padding:14px;text-align:center;}
+.ic.ora{background:rgba(240,90,0,0.04);border-color:rgba(240,90,0,0.12);}
+.ic.grn{background:rgba(0,168,79,0.05);border-color:rgba(0,168,79,0.12);}
+.ic-icon{font-size:22px;margin-bottom:7px;}
+.ic-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:var(--bright);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.ic-text{font-size:11px;color:var(--text);line-height:1.5;}
+.ic-badge{display:inline-block;margin-top:7px;padding:2px 10px;border-radius:12px;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.ic-badge.b{background:rgba(0,100,220,0.1);color:var(--blue);border:1px solid rgba(0,100,220,0.2);}
+.ic-badge.o{background:rgba(240,90,0,0.1);color:var(--orange);border:1px solid rgba(240,90,0,0.2);}
+.feat-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid rgba(0,100,220,0.07);font-size:12px;line-height:1.5;}
+.feat-row:last-child{border:none;}.feat-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+.flow-chain{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:12px;background:rgba(0,100,220,0.05);border-radius:8px;border:1px solid rgba(0,100,220,0.1);}
+.fc-node{padding:5px 12px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.fc-arr{color:rgba(0,144,255,0.4);font-size:13px;}
+.step-list{display:flex;flex-direction:column;gap:6px;}
+.step-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:rgba(0,100,220,0.04);border-left:3px solid var(--blue);border-radius:0 7px 7px 0;font-size:12px;line-height:1.5;}
+.step-item.ora{background:rgba(240,90,0,0.04);border-color:var(--orange);}
+.step-n{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--cyan);min-width:22px;flex-shrink:0;}
+.step-n.ora{color:var(--orange);}
+.ctbl{width:100%;border-collapse:collapse;font-size:12px;}
+.lesson-section .ctbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.ctbl th{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;text-align:left;border-bottom:2px solid rgba(0,100,220,0.15);}
+.ctbl td{padding:8px 12px;border-bottom:1px solid rgba(0,100,220,0.07);}
+.ctbl tr:hover td{background:rgba(0,100,220,0.04);}
+.mono{font-family:'Share Tech Mono',monospace;}
+.code-block{background:#f0f4fa;border:1px solid rgba(0,100,220,0.14);border-radius:8px;padding:14px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.9;color:#2a3f58;overflow-x:auto;margin-top:8px;}
+.kw{color:#c05000;}.val{color:#005fad;}.cmt{color:#8aabbf;font-style:italic;}
+.wave-area{background:rgba(0,100,220,0.04);border:1px solid rgba(0,100,220,0.1);border-radius:8px;padding:14px;margin-top:8px;}
+.key-points{background:rgba(200,134,10,0.06);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:12px;}
+.kp-head{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.kp-item{font-size:12px;line-height:2;display:flex;align-items:flex-start;gap:7px;}
+.kp-item::before{content:'✦';color:var(--gold);font-size:9px;flex-shrink:0;margin-top:4px;}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.b-blue{background:rgba(0,100,220,0.08);color:var(--cyan);border:1px solid rgba(0,100,220,0.2);}
+.b-ora{background:rgba(255,122,0,0.12);color:var(--orange);border:1px solid rgba(255,122,0,0.25);}
+.b-grn{background:rgba(46,232,138,0.12);color:var(--green);border:1px solid rgba(46,232,138,0.25);}
+
+/* ── TIER COLOURS ── */
+.tc-0{color:#8899aa;border-color:#8899aa;}.bg-tc-0{background:rgba(136,153,170,0.1);}
+.tc-1{color:#007838;border-color:#007838;}.bg-tc-1{background:rgba(46,232,138,0.1);}
+.tc-2{color:#0060c0;border-color:#0060c0;}.bg-tc-2{background:rgba(0,144,255,0.1);}
+.tc-3{color:#b060ff;border-color:#b060ff;}.bg-tc-3{background:rgba(176,96,255,0.1);}
+.tc-4{color:#c05000;border-color:#c05000;}.bg-tc-4{background:rgba(255,122,0,0.1);}
+.tc-5{color:#ff3a5c;border-color:#ff3a5c;}.bg-tc-5{background:rgba(255,58,92,0.1);}
+.tc-6{color:#ffd500;border-color:#ffd500;}.bg-tc-6{background:rgba(255,213,0,0.1);}
+
+/* ═══════════════════════════════════════
+   MOBILE RESPONSIVE — full breakpoint system
+═══════════════════════════════════════ */
+
+/* ── 768px: tablet & large phone landscape ── */
+@media (max-width: 768px) {
+
+  /* HEADER */
+  header { padding: 0 12px; height: 50px; gap: 8px; }
+  .te-tagline { display: none; }
+  .te-name { font-size: 13px; }
+  .hdr-center { display: none; }           /* hide progress dots on small screens */
+  .xp-bar { width: 60px; }
+  .btn-map { padding: 5px 10px; font-size: 10px; letter-spacing: 0; }
+
+  /* HOME */
+  #v-home .home-inner { padding: 24px 16px; }
+  .hero-tag { font-size: 9px; letter-spacing: 2px; padding: 4px 14px; }
+  .hero-title { font-size: clamp(36px, 10vw, 60px); margin-bottom: 12px; }
+  .hero-title .to { font-size: 0.45em; letter-spacing: 2px; }
+  .hero-sub { font-size: 14px; margin-bottom: 24px; }
+  .hero-stats { gap: 18px; margin-bottom: 28px; }
+  .stat-num { font-size: 26px; }
+  .stat-lbl { font-size: 9px; }
+  .btn-start { padding: 12px 32px; font-size: 14px; }
+  .home-path { gap: 4px; margin-top: 20px; }
+  .hp-node { font-size: 9px; padding: 4px 10px; }
+  .hp-arr { font-size: 11px; }
+
+  /* MAP */
+  #v-map .map-inner { padding: 14px 14px 20px; }
+  .map-title { font-size: 18px; }
+  .map-sub { font-size: 11px; margin-bottom: 14px; }
+  .road-line { left: 28px; }
+  .tier-badge { width: 56px; }
+  .tier-dot { width: 16px; height: 16px; font-size: 8px; }
+  .tier-label { font-size: 8px; }
+  .tier-modules { padding-left: 8px; }
+  .mcard { min-width: 100%; max-width: 100%; padding: 12px; }
+  .mc-icon { font-size: 20px; }
+  .mc-title { font-size: 13px; }
+  .mc-desc { font-size: 11px; }
+
+  /* MODULE */
+  #v-module .mod-inner { padding: 12px 12px 90px; }
+  .mod-header { padding: 14px; gap: 12px; flex-wrap: wrap; }
+  .mod-icon { font-size: 32px; }
+  .mod-title { font-size: 20px; }
+  .mod-desc-text { font-size: 12px; }
+  .lesson-section { padding: 14px 12px; }
+  .ls-head { font-size: 12px; }
+  .ls-body { font-size: 12px; line-height: 1.65; }
+
+  /* lesson grids collapse to 1 col on mobile */
+  .g2, .g3, .g4 { grid-template-columns: 1fr !important; }
+
+  .ic { padding: 10px; }
+  .ic-icon { font-size: 18px; margin-bottom: 5px; }
+  .ic-title { font-size: 11px; }
+  .ic-text { font-size: 10px; }
+
+  .flow-chain { gap: 3px; padding: 8px; font-size: 10px; }
+  .fc-node { padding: 4px 8px; font-size: 10px; }
+  .fc-arr { font-size: 11px; }
+
+  .step-list { gap: 5px; }
+  .step-item { padding: 7px 10px; font-size: 11px; }
+  .step-n { font-size: 13px; }
+
+  .ctbl { font-size: 11px; }
+  .ctbl th { padding: 7px 8px; font-size: 10px; }
+  .ctbl td { padding: 6px 8px; }
+
+  .code-block { font-size: 10px; padding: 10px; }
+  .key-points { padding: 10px 12px; }
+  .kp-item { font-size: 11px; }
+
+  /* QUIZ CTA bar */
+  #quiz-cta { padding: 10px 12px; }
+  .btn-back { padding: 8px 12px; font-size: 10px; }
+  .cta-info-txt { display: none; }
+  .btn-quiz { padding: 8px 18px; font-size: 11px; letter-spacing: 1px; }
+
+  /* QUIZ VIEW */
+  #v-quiz .quiz-inner { padding: 12px 12px; }
+  .qcard { padding: 16px 14px; }
+  .q-text { font-size: 16px; }
+  .qopt { padding: 10px 12px; font-size: 12px; }
+  .q-feedback { font-size: 11px; padding: 10px 12px; }
+  .score-num { font-size: 36px; }
+  .score-grade { font-size: 20px; }
+  .score-msg { font-size: 13px; }
+  .score-btns { flex-direction: column; align-items: center; }
+  .score-ring { width: 110px; height: 110px; }
+  .score-ring-inner { width: 98px; height: 98px; }
+
+  /* CERTIFICATE */
+  #v-cert .cert-inner { padding: 12px 10px; align-items: flex-start; }
+  .cert-card { border-radius: 4px; }
+  .cert-ribbon-top { padding: 7px 0; }
+  .cert-ribbon-top-text { font-size: 9px; letter-spacing: 3px; }
+  .cert-ribbon-bot { padding: 6px 0; }
+  .cert-ribbon-bot-text { font-size: 8px; letter-spacing: 2px; }
+  .cert-body { padding: 16px 20px 18px; }
+  .cert-corner { width: 36px; height: 36px; }
+  .cert-corner svg { width: 36px; height: 36px; }
+  .cert-main-title { font-size: clamp(28px, 8vw, 44px); }
+  .cert-of { font-size: 9px; letter-spacing: 2px; }
+  .cert-seal { width: 72px; height: 72px; }
+  .cert-seal-inner { width: 58px; height: 58px; }
+  .cert-seal-icon { font-size: 20px; }
+  .cert-seal-text { font-size: 6px; }
+  .cert-course { font-size: 18px; }
+  .cert-sub-course { font-size: 11px; }
+  .cert-stats { flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .cert-stat { min-width: calc(50% - 3px); max-width: calc(50% - 3px); border-radius: 6px !important; }
+  .cert-stat-num { font-size: 18px; }
+  .cert-stat-lbl { font-size: 8px; }
+  .cert-btns { flex-wrap: wrap; gap: 8px; }
+  .cert-btns button { flex: 1; min-width: 100px; font-size: 10px; padding: 8px 10px; }
+  .cert-id { font-size: 8px; letter-spacing: 1px; margin-top: 8px; }
+  .cert-divider { margin: 8px 0; }
+}
+
+/* ── 480px: phone portrait ── */
+@media (max-width: 480px) {
+
+  /* HEADER */
+  header { padding: 0 10px; height: 46px; }
+  #tem-badge { width: 36px; height: 36px; }
+  #tem-letters { font-size: 14px; }
+  .te-name { font-size: 13px; }
+  .xp-wrap { display: none; }
+  .btn-map { font-size: 9px; padding: 5px 9px; }
+
+  /* HOME */
+  .hero-title { font-size: clamp(30px, 12vw, 48px); }
+  .hero-stats { gap: 12px; }
+  .stat-div { display: none; }
+  .stat-num { font-size: 22px; }
+  .home-path { display: none; }
+
+  /* MAP */
+  .tier { flex-direction: column; }
+  .tier-badge { width: 100%; flex-direction: row; padding: 8px 14px; gap: 10px; align-items: center; }
+  .tier-dot { margin-bottom: 0; }
+  .road-line { display: none; }
+  .tier-modules { padding-left: 0; }
+
+  /* MODULE */
+  .mod-header { flex-direction: column; align-items: flex-start; }
+  .mod-icon { align-self: flex-start; }
+
+  /* QUIZ */
+  .q-text { font-size: 14px; }
+  .btn-next-q { font-size: 11px; padding: 8px 18px; }
+
+  /* CERT */
+  .cert-btns { flex-direction: column; }
+  .cert-btns button { width: 100%; }
+  .cert-stats { gap: 4px; }
+  .cert-stat { min-width: 100%; max-width: 100%; border-radius: 6px !important; }
+}
+
+/* ── Touch device: remove hover transforms ── */
+@media (hover: none) {
+  .mcard:hover { transform: none !important; }
+  .btn-start:hover { transform: none !important; }
+  .btn-quiz:hover { transform: none !important; }
+}
+
+/* ═══════════════════════════════════════
+   GLOBAL DYNAMIC ANIMATION SYSTEM
+═══════════════════════════════════════ */
+
+/* ── Scroll-reveal base state ── */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .55s cubic-bezier(.22,.68,0,1.2), transform .55s cubic-bezier(.22,.68,0,1.2);
+}
+.reveal.in{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-32px);transition:opacity .5s ease, transform .5s ease;}
+.reveal-left.in{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(32px);transition:opacity .5s ease, transform .5s ease;}
+.reveal-right.in{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(0.88);transition:opacity .45s ease, transform .45s cubic-bezier(.34,1.56,.64,1);}
+.reveal-scale.in{opacity:1;transform:scale(1);}
+
+/* Stagger children automatically */
+.stagger > *:nth-child(1){transition-delay:.05s;}
+.stagger > *:nth-child(2){transition-delay:.13s;}
+.stagger > *:nth-child(3){transition-delay:.21s;}
+.stagger > *:nth-child(4){transition-delay:.29s;}
+.stagger > *:nth-child(5){transition-delay:.37s;}
+.stagger > *:nth-child(6){transition-delay:.45s;}
+
+/* ── Enhanced card hover ── */
+.mcard{
+  transition:all .3s cubic-bezier(.22,.68,0,1.2) !important;
+}
+.mcard:not(.mlocked)::after{
+  content:'';position:absolute;inset:0;border-radius:10px;
+  background:linear-gradient(135deg,rgba(0,112,224,0.06) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.mcard:not(.mlocked):hover::after{opacity:1;}
+.mcard:not(.mlocked):hover{
+  transform:translateY(-6px) scale(1.012) !important;
+  box-shadow:0 16px 40px rgba(0,80,180,0.18),0 0 0 1px rgba(0,112,224,0.15) !important;
+}
+.mcard:not(.mlocked):active{transform:translateY(-2px) scale(1.004) !important;}
+
+/* ── Lesson section animate-in ── */
+.lesson-section{
+  transition:box-shadow .3s ease, border-color .3s ease;
+}
+.lesson-section:hover{
+  box-shadow:0 4px 20px rgba(0,80,180,0.1) !important;
+  border-color:rgba(0,112,224,0.2) !important;
+}
+
+/* ── ic info-card hover ── */
+.ic{
+  transition:all .28s cubic-bezier(.22,.68,0,1.2);
+  cursor:default;
+}
+.ic:hover{
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:0 8px 24px rgba(0,80,180,0.12);
+  border-color:rgba(0,112,224,0.28) !important;
+}
+.ic.ora:hover{box-shadow:0 8px 24px rgba(240,90,0,0.12);border-color:rgba(240,90,0,0.28) !important;}
+.ic.grn:hover{box-shadow:0 8px 24px rgba(0,168,79,0.12);border-color:rgba(0,168,79,0.28) !important;}
+
+/* ── Step-item hover ── */
+.step-item{
+  transition:all .22s ease;cursor:default;
+}
+.step-item:hover{
+  transform:translateX(5px);
+  background:rgba(0,100,220,0.08) !important;
+  border-color:var(--blue) !important;
+}
+.step-item.ora:hover{background:rgba(240,90,0,0.08) !important;}
+
+/* ── feat-row hover ── */
+.feat-row{transition:background .2s ease,padding-left .2s ease;}
+.feat-row:hover{background:rgba(0,100,220,0.04);padding-left:8px;}
+
+/* ── kp-item hover ── */
+.kp-item{transition:transform .2s ease;}
+.kp-item:hover{transform:translateX(4px);}
+
+/* ── flow-chain node hover ── */
+.fc-node{
+  transition:all .22s cubic-bezier(.22,.68,0,1.2);cursor:default;
+}
+.fc-node:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 4px 12px rgba(0,80,180,0.15);}
+
+/* ── Table row hover ── */
+.ctbl tbody tr{transition:background .18s ease,transform .18s ease;}
+.ctbl tbody tr:hover td{background:rgba(0,100,220,0.05) !important;padding-left:16px;}
+.ctbl td{transition:padding-left .18s ease;}
+
+/* ── qopt ripple + hover ── */
+.qopt{position:relative;overflow:hidden;}
+.qopt::after{
+  content:'';position:absolute;left:50%;top:50%;
+  width:0;height:0;border-radius:50%;
+  background:rgba(0,112,224,0.15);
+  transform:translate(-50%,-50%);
+  transition:width .4s ease,height .4s ease,opacity .4s ease;
+  opacity:0;pointer-events:none;
+}
+.qopt:not(.locked):active::after{width:300px;height:300px;opacity:0;}
+
+/* ── Progress bar animated fill ── */
+.q-prog-fill{
+  background:linear-gradient(90deg, var(--blue), var(--cyan), var(--orange));
+  background-size:200% 100%;
+  animation:progShimmer 2s linear infinite;
+}
+@keyframes progShimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ── XP fill shimmer ── */
+.xp-fill{
+  background:linear-gradient(90deg,var(--orange),#ffaa00,var(--orange));
+  background-size:200% 100%;
+  animation:xpShimmer 2s linear infinite;
+}
+@keyframes xpShimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ── btn-start pulse glow ── */
+.btn-start{
+  animation:btnGlow 2.5s ease infinite;
+}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 0 20px rgba(0,100,220,0.25),0 4px 16px rgba(0,80,180,0.2);}
+  50%{box-shadow:0 0 35px rgba(0,112,224,0.45),0 8px 24px rgba(0,80,180,0.3);}
+}
+
+/* ── btn-quiz animated arrow ── */
+.btn-quiz{position:relative;overflow:hidden;}
+.btn-quiz::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  animation:quizShimmer 2s ease infinite;
+}
+@keyframes quizShimmer{0%{left:-100%;}100%{left:200%;}}
+
+/* ── Score ring animated conic ── */
+.score-ring{
+  background:conic-gradient(var(--blue) 0deg, rgba(0,100,220,0.1) 0deg);
+  transition:background 1s ease;
+}
+
+/* ── Tier dots pulse on active ── */
+.prog-step.active{
+  animation:dotPulse 1.8s ease infinite;
+}
+@keyframes dotPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,112,224,0.5);}
+  50%{box-shadow:0 0 0 5px rgba(0,112,224,0);}
+}
+
+/* ── Map card entrance animation ── */
+@keyframes cardSlideIn{
+  from{opacity:0;transform:translateX(-20px);}
+  to{opacity:1;transform:translateX(0);}
+}
+
+/* ── Mod breadcrumb hover ── */
+.mod-crumb{
+  display:inline-flex;align-items:center;gap:5px;
+  transition:all .2s ease;border-radius:4px;padding:2px 6px;margin-left:-6px;
+}
+.mod-crumb:hover{background:rgba(0,112,224,0.07);color:var(--blue);padding-left:10px;}
+
+/* ── Hero stats counter ── */
+.stat-num{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ── hero-path nodes hover ── */
+.hp-node{
+  transition:all .25s cubic-bezier(.22,.68,0,1.2);
+}
+.hp-node:hover{transform:translateY(-3px) scale(1.06);cursor:default;}
+
+/* ── section entry animation ── */
+@keyframes sectionFlyIn{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.view.active .mod-header{animation:sectionFlyIn .4s ease both;}
+.view.active .lesson-section:nth-child(1){animation:sectionFlyIn .4s .05s ease both;}
+.view.active .lesson-section:nth-child(2){animation:sectionFlyIn .4s .12s ease both;}
+.view.active .lesson-section:nth-child(3){animation:sectionFlyIn .4s .19s ease both;}
+.view.active .lesson-section:nth-child(4){animation:sectionFlyIn .4s .26s ease both;}
+.view.active .lesson-section:nth-child(5){animation:sectionFlyIn .4s .33s ease both;}
+
+/* ── qcard fly-in ── */
+.qcard{animation:sectionFlyIn .35s ease both;}
+
+/* ── tier rows ── */
+.tier{
+  animation:cardSlideIn .4s ease both;
+}
+.tier:nth-child(1){animation-delay:.04s;}
+.tier:nth-child(2){animation-delay:.10s;}
+.tier:nth-child(3){animation-delay:.16s;}
+.tier:nth-child(4){animation-delay:.22s;}
+.tier:nth-child(5){animation-delay:.28s;}
+.tier:nth-child(6){animation-delay:.34s;}
+.tier:nth-child(7){animation-delay:.40s;}
+
+/* ── HOME hero entrance ── */
+@keyframes heroEntrance{
+  from{opacity:0;transform:translateY(24px) scale(0.97);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+.hero-tag{animation:heroEntrance .5s .1s ease both;}
+.hero-title{animation:heroEntrance .6s .2s ease both;}
+.hero-sub{animation:heroEntrance .5s .35s ease both;}
+.hero-stats{animation:heroEntrance .5s .48s ease both;}
+.btn-start{animation:heroEntrance .5s .6s ease both, btnGlow 2.5s 1.1s ease infinite;}
+.home-path{animation:heroEntrance .5s .72s ease both;}
+
+/* ── Typing cursor on ls-head ── */
+.ls-head::after{
+  content:'';display:inline-block;width:2px;height:14px;
+  background:currentColor;margin-left:6px;vertical-align:middle;
+  animation:blink .9s step-end infinite;opacity:0;
+}
+.lesson-section:hover .ls-head::after{opacity:1;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ── Map title underline animate ── */
+.map-title{position:relative;display:inline-block;}
+.map-title::after{
+  content:'';position:absolute;left:0;bottom:-2px;
+  height:2px;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--blue),var(--orange));
+  animation:underlineIn .8s .3s ease forwards;
+}
+@keyframes underlineIn{to{width:100%;}}
+
+/* ── Badge glow on complete ── */
+.mcard.mdone{
+  animation:doneGlow 3s ease infinite;
+}
+@keyframes doneGlow{
+  0%,100%{box-shadow:0 2px 8px rgba(0,80,180,0.06);}
+  50%{box-shadow:0 4px 18px rgba(0,168,79,0.2);}
+}
+
+/* ── cert card entrance ── */
+.cert-card{
+  animation:heroEntrance .6s .1s cubic-bezier(.22,.68,0,1.2) both;
+}
+
+/* ── Animated gradient text for cert main title ── */
+.cert-main-title{
+  background-size:300% 100%;
+  animation:goldFlow 4s linear infinite;
+}
+@keyframes goldFlow{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ── Floating particles on home (pure CSS) ── */
+.home-inner::before{
+  content:'⚙ ⚡ 📡 🔌 🧠';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  display:none; /* handled by Three.js */
+}
+
+/* ── Animated border on module header ── */
+@keyframes borderTrace{
+  0%{border-color:rgba(0,100,220,0.1);}
+  50%{border-color:rgba(0,112,224,0.3);}
+  100%{border-color:rgba(0,100,220,0.1);}
+}
+.mod-header{animation:borderTrace 3s ease infinite;}
+
+/* ── Ribbon shimmer ── */
+.cert-ribbon-top{
+  background-size:300% 100%;
+  animation:ribbonShimmer 3s linear infinite;
+}
+.cert-ribbon-bot{
+  background-size:300% 100%;
+  animation:ribbonShimmer 3s linear infinite reverse;
+}
+@keyframes ribbonShimmer{
+  0%{background-position:0% 50%;}
+  100%{background-position:300% 50%;}
+}
+
+/* ── Animated check icon for complete steps ── */
+@keyframes checkPop{
+  0%{transform:scale(0);}
+  70%{transform:scale(1.3);}
+  100%{transform:scale(1);}
+}
+.mc-status .check-icon{animation:checkPop .4s cubic-bezier(.34,1.56,.64,1) both;}
+
+/* ── Smooth pill hover ── */
+.pill{transition:all .2s ease;}
+.pill:hover{background:rgba(0,112,224,0.08);border-color:rgba(0,112,224,0.2);transform:scale(1.04);}
+
+/* ── Badge ic-badge bounce on hover ── */
+.ic-badge{transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+.ic:hover .ic-badge{transform:scale(1.1) translateY(-2px);}
+
+/* ── Score num count-up feel ── */
+@keyframes numPop{
+  0%{transform:scale(0.6);opacity:0;}
+  70%{transform:scale(1.1);}
+  100%{transform:scale(1);opacity:1;}
+}
+.score-num{animation:numPop .5s .2s cubic-bezier(.34,1.56,.64,1) both;}
+.score-grade{animation:numPop .5s .45s cubic-bezier(.34,1.56,.64,1) both;}
+.score-msg{animation:heroEntrance .4s .6s ease both;}
+.score-btns{animation:heroEntrance .4s .75s ease both;}
+
+/* ── Cert stats count-up visual ── */
+.cert-stat{
+  transition:all .28s cubic-bezier(.22,.68,0,1.2);
+}
+.cert-stat:hover{
+  transform:translateY(-4px) scale(1.06);
+  box-shadow:0 6px 16px rgba(200,134,10,0.18);
+}
+.cert-stat-num{animation:numPop .5s cubic-bezier(.34,1.56,.64,1) both;}
+.cert-stat:nth-child(1) .cert-stat-num{animation-delay:.3s;}
+.cert-stat:nth-child(2) .cert-stat-num{animation-delay:.45s;}
+.cert-stat:nth-child(3) .cert-stat-num{animation-delay:.6s;}
+.cert-stat:nth-child(4) .cert-stat-num{animation-delay:.75s;}
+
+/* ── Road line animated gradient ── */
+@keyframes roadPulse{
+  0%{background-position:0% 0%;}
+  100%{background-position:0% 200%;}
+}
+.road-line{
+  background-size:100% 200%;
+  animation:roadPulse 3s linear infinite;
+}
+
+/* ── Key points section entrance ── */
+.key-points{
+  transition:box-shadow .3s ease;
+}
+.key-points:hover{
+  box-shadow:0 4px 16px rgba(200,134,10,0.12);
+}
+
+/* ── Home stat-div animated ── */
+.stat-div{
+  background:linear-gradient(to bottom,transparent,rgba(0,112,224,0.3),transparent);
+  animation:divPulse 2s ease infinite;
+}
+@keyframes divPulse{
+  0%,100%{opacity:0.5;}
+  50%{opacity:1;}
+}
+
+/* ── Wave-area SVG hover ── */
+.wave-area{transition:box-shadow .25s ease;}
+.wave-area:hover{box-shadow:0 4px 16px rgba(0,80,180,0.1);}
+
+/* ── code-block line highlight ── */
+.code-block{transition:box-shadow .25s ease;}
+.code-block:hover{box-shadow:0 4px 16px rgba(0,80,180,0.1);border-color:rgba(0,112,224,0.2);}
+
+/* ── Scroll indicator on map ── */
+@keyframes scrollBounce{
+  0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}
+}
+
+/* ═══════════════════════════════════════
+   PRINT STYLES — Certificate only
+═══════════════════════════════════════ */
+@media print {
+  /* Hide everything except the cert */
+  #bg, header, #quiz-cta,
+  .view:not(#v-cert),
+  #v-cert .cert-btns,
+  #v-cert canvas,
+  .cert-corner { display: none !important; }
+
+  /* Show cert view */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  #app { height: auto !important; overflow: visible !important; }
+  main { overflow: visible !important; height: auto !important; }
+  #v-cert {
+    position: static !important;
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  #v-cert .cert-inner {
+    display: block !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .cert-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    animation: none !important;
+  }
+  .cert-card::before { display: none !important; }
+  .cert-ribbon-top, .cert-ribbon-bot {
+    animation: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .cert-main-title {
+    animation: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .cert-seal {
+    animation: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div id="app">
+
+<!-- HEADER -->
+<header>
+  <div class="te-logo" onclick="show('home')" title="TechEdge Market — Home">
+    <!-- TEM Badge -->
+    <div id="tem-badge">
+      <!-- Animated ring (element 0: outer) -->
+      <div id="tem-ring-outer" style="position:absolute;inset:0;border-radius:8px;border:2px solid transparent;pointer-events:none;z-index:1;"></div>
+      <!-- Animated ring (element 1: inner) -->
+      <div id="tem-ring-inner" style="position:absolute;inset:4px;border-radius:6px;border:1px solid transparent;pointer-events:none;z-index:1;"></div>
+      <!-- Background fill -->
+      <div id="tem-bg" style="position:absolute;inset:0;border-radius:8px;z-index:0;"></div>
+      <!-- Letters -->
+      <div id="tem-letters">
+        <span id="tem-t">T</span><span id="tem-e">E</span><span id="tem-m">M</span>
+      </div>
+    </div>
+    <!-- Brand name -->
+    <div class="te-brand">
+      <div class="te-name">
+        <span class="te-n1">TechEdge</span><span class="te-n3">&nbsp;Market</span>
+      </div>
+      <div class="te-tagline">Learning Platform</div>
+    </div>
+  </div>
+  <div class="hdr-center">
+    <div class="progress-track">
+      <div id="prog-dots"></div>
+      <div class="prog-label" id="prog-label">0 / 10</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="xp-wrap">
+      <div class="xp-lbl">XP</div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+    </div>
+    <button class="btn-map" onclick="show('map')">⬡ Course Map</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HOME -->
+  <div id="v-home" class="view active">
+    <div class="home-inner">
+      <div class="hero-tag">TechEdge Market Learning Platform</div>
+      <div class="hero-title">
+        <span class="zero">Zero</span>
+        <span class="to">— to —</span>
+        <span class="hero-word">Hero</span>
+      </div>
+      <div class="hero-sub">Master Industrial Automation from the ground up. Sensors → PLCs → VFDs → Networks → SCADA. A structured path for engineers and technicians.</div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">10</div><div class="stat-lbl">Modules</div></div>
+        <div class="stat-div"></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">Levels</div></div>
+        <div class="stat-div"></div>
+        <div class="stat"><div class="stat-num">60+</div><div class="stat-lbl">Concepts</div></div>
+        <div class="stat-div"></div>
+        <div class="stat"><div class="stat-num">40</div><div class="stat-lbl">Quiz Qs</div></div>
+      </div>
+      <button class="btn-start" onclick="show('map')">Begin Learning →</button>
+      <div class="home-path">
+        <div class="hp-node" style="background:rgba(90,100,115,0.08);color:#5a6478;border:1px solid rgba(90,100,115,0.2);">⬡ Foundation</div>
+        <div class="hp-arr">▶</div>
+        <div class="hp-node" style="background:rgba(0,168,79,0.08);color:#00a84f;border:1px solid rgba(46,232,138,0.2);">⬡ Sensors</div>
+        <div class="hp-arr">▶</div>
+        <div class="hp-node" style="background:rgba(0,100,220,0.06);color:#0060c0;border:1px solid rgba(0,144,255,0.2);">⬡ PLC Logic</div>
+        <div class="hp-arr">▶</div>
+        <div class="hp-node" style="background:rgba(124,58,237,0.08);color:#7c3aed;border:1px solid rgba(176,96,255,0.2);">⬡ Motor Drive</div>
+        <div class="hp-arr">▶</div>
+        <div class="hp-node" style="background:rgba(240,90,0,0.07);color:#c05000;border:1px solid rgba(240,90,0,0.2);">⬡ Networks</div>
+        <div class="hp-arr">▶</div>
+        <div class="hp-node" style="background:rgba(200,134,10,0.08);color:#c8860a;border:1px solid rgba(255,213,0,0.2);">🏆 HERO</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="v-map" class="view">
+    <div class="map-inner">
+      <div class="map-title">Course Roadmap — Zero to Hero</div>
+      <div class="map-sub">10 modules across 7 levels. Complete each module to unlock the next.</div>
+      <div class="road">
+        <div class="road-line"></div>
+        <div id="tier-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE -->
+  <div id="v-module" class="view">
+    <div class="mod-inner" id="module-content"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="v-quiz" class="view">
+    <div class="quiz-inner">
+      <div class="qwrap" id="quiz-area"></div>
+    </div>
+  </div>
+
+  <!-- CERT -->
+  <div id="v-cert" class="view">
+    <div class="cert-inner">
+      <canvas id="cert-canvas"></canvas>
+
+      <div class="cert-card">
+
+        <!-- TOP RIBBON -->
+        <div class="cert-ribbon-top">
+          <div class="cert-ribbon-top-text">✦ &nbsp; TechEdge Market Learning Platform &nbsp; ✦</div>
+        </div>
+
+        <!-- CORNER ORNAMENTS -->
+        <div class="cert-corner tl">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#ffd500" stroke-width="1.5" opacity="0.7"/>
+            <path d="M4 4 L4 18 M4 4 L18 4" stroke="#ffd500" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="4" cy="4" r="3" fill="#ffd500" opacity="0.8"/>
+            <circle cx="26" cy="4" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <circle cx="4" cy="26" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <path d="M10 10 L10 20 Q10 22 12 22 L22 22" stroke="#ffd500" stroke-width="0.8" opacity="0.3" fill="none"/>
+            <circle cx="4" cy="40" r="1" fill="#ffd500" opacity="0.25"/>
+            <circle cx="40" cy="4" r="1" fill="#ffd500" opacity="0.25"/>
+          </svg>
+        </div>
+        <div class="cert-corner tr">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#ffd500" stroke-width="1.5" opacity="0.7"/>
+            <path d="M4 4 L4 18 M4 4 L18 4" stroke="#ffd500" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="4" cy="4" r="3" fill="#ffd500" opacity="0.8"/>
+            <circle cx="26" cy="4" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <circle cx="4" cy="26" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <path d="M10 10 L10 20 Q10 22 12 22 L22 22" stroke="#ffd500" stroke-width="0.8" opacity="0.3" fill="none"/>
+          </svg>
+        </div>
+        <div class="cert-corner bl">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#ffd500" stroke-width="1.5" opacity="0.7"/>
+            <path d="M4 4 L4 18 M4 4 L18 4" stroke="#ffd500" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="4" cy="4" r="3" fill="#ffd500" opacity="0.8"/>
+            <circle cx="26" cy="4" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <circle cx="4" cy="26" r="1.5" fill="#ffd500" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="cert-corner br">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <path d="M4 4 L4 26 M4 4 L26 4" stroke="#ffd500" stroke-width="1.5" opacity="0.7"/>
+            <path d="M4 4 L4 18 M4 4 L18 4" stroke="#ffd500" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="4" cy="4" r="3" fill="#ffd500" opacity="0.8"/>
+            <circle cx="26" cy="4" r="1.5" fill="#ffd500" opacity="0.5"/>
+            <circle cx="4" cy="26" r="1.5" fill="#ffd500" opacity="0.5"/>
+          </svg>
+        </div>
+
+        <!-- BODY -->
+        <div class="cert-body">
+
+          <!-- SVG deco border frame inside the body -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.4" viewBox="0 0 720 420" preserveAspectRatio="none">
+            <rect x="18" y="8" width="684" height="404" fill="none" stroke="#ffd500" stroke-width="0.6" stroke-dasharray="6 4"/>
+            <rect x="28" y="18" width="664" height="384" fill="none" stroke="#ffd500" stroke-width="0.3" opacity="0.5"/>
+            <!-- ornamental dots along border -->
+            <circle cx="360" cy="8" r="2.5" fill="#ffd500" opacity="0.8"/>
+            <circle cx="360" cy="412" r="2.5" fill="#ffd500" opacity="0.8"/>
+            <circle cx="18" cy="210" r="2.5" fill="#ffd500" opacity="0.8"/>
+            <circle cx="702" cy="210" r="2.5" fill="#ffd500" opacity="0.8"/>
+            <!-- corner diamonds -->
+            <polygon points="18,8 24,14 18,20 12,14" fill="#ffd500" opacity="0.9"/>
+            <polygon points="702,8 708,14 702,20 696,14" fill="#ffd500" opacity="0.9"/>
+            <polygon points="18,400 24,406 18,412 12,406" fill="#ffd500" opacity="0.9"/>
+            <polygon points="702,400 708,406 702,412 696,406" fill="#ffd500" opacity="0.9"/>
+            <!-- mid-side ornaments -->
+            <line x1="320" y1="8" x2="340" y2="8" stroke="#ffd500" stroke-width="1.5" opacity="0.6"/>
+            <line x1="380" y1="8" x2="400" y2="8" stroke="#ffd500" stroke-width="1.5" opacity="0.6"/>
+            <line x1="320" y1="412" x2="340" y2="412" stroke="#ffd500" stroke-width="1.5" opacity="0.6"/>
+            <line x1="380" y1="412" x2="400" y2="412" stroke="#ffd500" stroke-width="1.5" opacity="0.6"/>
+          </svg>
+
+          <!-- SEAL -->
+          <div class="cert-seal-wrap">
+            <div class="cert-seal">
+              <div class="cert-seal-inner">
+                <div class="cert-seal-icon">⚙️</div>
+                <div class="cert-seal-text">CERTIFIED</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cert-of">Certificate of Completion</div>
+          <div class="cert-main-title">ZERO TO HERO</div>
+
+          <div class="cert-divider">
+            <div class="cert-divider-line"></div>
+            <div class="cert-divider-diamond">◆</div>
+            <div class="cert-divider-line"></div>
+          </div>
+
+          <div class="cert-awarded">Awarded for successfully completing</div>
+          <div class="cert-course">Industrial Automation Control Systems</div>
+          <div class="cert-sub-course">All 10 Modules &nbsp;·&nbsp; 7 Levels &nbsp;·&nbsp; Full Course Assessment</div>
+
+          <div class="cert-divider">
+            <div class="cert-divider-line"></div>
+            <div class="cert-divider-diamond">◆</div>
+            <div class="cert-divider-line"></div>
+          </div>
+
+          <div class="cert-stats">
+            <div class="cert-stat">
+              <div class="cert-stat-num">10</div>
+              <div class="cert-stat-lbl">MODULES</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">40+</div>
+              <div class="cert-stat-lbl">QUIZ Q's</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">7</div>
+              <div class="cert-stat-lbl">LEVELS</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">1000</div>
+              <div class="cert-stat-lbl">XP EARNED</div>
+            </div>
+          </div>
+
+          <div class="cert-id">TE-CERT-IACS-ZTH-2025 &nbsp;·&nbsp; TECHEDGE MARKET</div>
+
+          <div class="cert-btns" style="pointer-events:all;">
+            <button class="btn-retry" onclick="show('map')">← Course Map</button>
+            <button class="btn-continue" id="cert-print-btn">⬇ Print / Save</button>
+            <button class="btn-continue" onclick="show('home')" style="background:linear-gradient(135deg,var(--blue),#0060cc);">🏠 Home</button>
+          </div>
+        </div>
+
+        <!-- BOTTOM RIBBON -->
+        <div class="cert-ribbon-bot">
+          <div class="cert-ribbon-bot-text">TE-CERT-IACS-ZTH-2025 &nbsp;·&nbsp; VERIFIED COMPLETION</div>
+        </div>
+
+      </div><!-- .cert-card -->
+    </div>
+  </div>
+
+</main>
+
+<!-- QUIZ CTA BAR — OUTSIDE main views, shown/hidden by JS -->
+<div id="quiz-cta">
+  <button class="btn-back" id="cta-back-btn">← Course Map</button>
+  <div class="cta-info-txt" id="cta-info"></div>
+  <button class="btn-quiz" id="cta-quiz-btn">Take Quiz →</button>
+</div>
+
+</div><!-- #app -->
+
+<script>
+
+// ═══════════════════════════════════════════════════════
+// THREE.JS — FACTORY FLOOR PRODUCTION LINE
+// ═══════════════════════════════════════════════════════
+(function () {
+  const canvas   = document.getElementById('bg');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0xd8e8f4, 1);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xd8e8f4);
+  scene.fog = new THREE.Fog(0xd8e8f4, 60, 160);
+
+  const cam = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 400);
+  cam.position.set(0, 28, 62);
+  cam.lookAt(0, 0, 0);
+
+  // ── HELPERS
+  function box(w, h, d, col, rx, ry, rz) {
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(w, h, d),
+      new THREE.MeshLambertMaterial({ color: col })
+    );
+    if (rx !== undefined) m.rotation.set(rx, ry || 0, rz || 0);
+    return m;
+  }
+  function cyl(rt, rb, h, seg, col) {
+    return new THREE.Mesh(
+      new THREE.CylinderGeometry(rt, rb, h, seg),
+      new THREE.MeshLambertMaterial({ color: col })
+    );
+  }
+  function grp() { return new THREE.Group(); }
+
+  // ─────────────────────────────────────
+  // FLOOR
+  // ─────────────────────────────────────
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(220, 120),
+    new THREE.MeshLambertMaterial({ color: 0xb8ccd8 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.01;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Floor grid lines
+  const gridHelper = new THREE.GridHelper(220, 44, 0x9aaab8, 0xaabbc8);
+  gridHelper.position.y = 0.02;
+  gridHelper.material.opacity = 0.4;
+  gridHelper.material.transparent = true;
+  scene.add(gridHelper);
+
+  // ─────────────────────────────────────
+  // LIGHTING
+  // ─────────────────────────────────────
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+  // Main factory overhead lights
+  const sunLight = new THREE.DirectionalLight(0xfff5e0, 0.8);
+  sunLight.position.set(20, 50, 30);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.set(1024, 1024);
+  sunLight.shadow.camera.near = 1;
+  sunLight.shadow.camera.far = 200;
+  sunLight.shadow.camera.left = -80;
+  sunLight.shadow.camera.right = 80;
+  sunLight.shadow.camera.top = 50;
+  sunLight.shadow.camera.bottom = -50;
+  scene.add(sunLight);
+
+  // Ceiling strip lights
+  const stripPositions = [[-30, 22, 0], [0, 22, 0], [30, 22, 0]];
+  stripPositions.forEach(([x, y, z]) => {
+    const pt = new THREE.PointLight(0xfff8e8, 0.6, 60);
+    pt.position.set(x, y, z);
+    scene.add(pt);
+
+    // Visible light fixture
+    const fixture = grp();
+    const bar = box(12, 0.3, 0.6, 0xdddddd);
+    bar.position.set(x, y + 0.2, z);
+    scene.add(bar);
+    // Glow panel below
+    const glow = box(11, 0.05, 0.5, 0xffffee);
+    glow.position.set(x, y - 0.05, z);
+    scene.add(glow);
+  });
+
+  // ─────────────────────────────────────
+  // CEILING STRUCTURE (trusses)
+  // ─────────────────────────────────────
+  for (let x = -60; x <= 60; x += 20) {
+    const truss = box(0.5, 0.5, 80, 0x8899aa);
+    truss.position.set(x, 24, 0);
+    scene.add(truss);
+    const cross = box(120, 0.5, 0.5, 0x8899aa);
+    cross.position.set(0, 24, x * 0.4);
+    scene.add(cross);
+  }
+
+  // ─────────────────────────────────────
+  // CONVEYOR BELT SYSTEM  (3 parallel lines)
+  // ─────────────────────────────────────
+  const CONV_Z = [-14, 0, 14];  // three lines front→back
+  const CONV_LEN = 100;
+  const beltMats = [];
+
+  CONV_Z.forEach((cz, li) => {
+    // Belt base frame
+    const frame = box(CONV_LEN, 1.0, 2.8, 0x607080);
+    frame.position.set(0, 0.5, cz);
+    frame.castShadow = true; frame.receiveShadow = true;
+    scene.add(frame);
+
+    // Belt surface (scrolling texture via UV offset)
+    const beltGeo = new THREE.PlaneGeometry(CONV_LEN, 2.0, 40, 1);
+    const beltMat = new THREE.MeshLambertMaterial({ color: li === 1 ? 0x222e38 : 0x1a2530 });
+    beltMats.push(beltMat);
+    const belt = new THREE.Mesh(beltGeo, beltMat);
+    belt.rotation.x = -Math.PI / 2;
+    belt.position.set(0, 1.02, cz);
+    scene.add(belt);
+
+    // Belt stripe lines (visual movement)
+    for (let x = -CONV_LEN / 2; x < CONV_LEN / 2; x += 3.5) {
+      const stripe = box(0.2, 0.05, 2.2, 0x3a4a58);
+      stripe.position.set(x, 1.04, cz);
+      scene.add(stripe);
+    }
+
+    // Rollers along side
+    for (let rx = -CONV_LEN / 2 + 4; rx < CONV_LEN / 2; rx += 8) {
+      const roller = cyl(0.35, 0.35, 3.0, 8, 0x778899);
+      roller.rotation.z = Math.PI / 2;
+      roller.position.set(rx, 0.5, cz);
+      scene.add(roller);
+    }
+
+    // Side rails
+    [-1.5, 1.5].forEach(dz => {
+      const rail = box(CONV_LEN, 0.3, 0.15, 0x556677);
+      rail.position.set(0, 1.5, cz + dz);
+      scene.add(rail);
+    });
+
+    // Support legs
+    for (let lx = -CONV_LEN / 2 + 8; lx <= CONV_LEN / 2 - 8; lx += 16) {
+      [-1.2, 1.2].forEach(dz => {
+        const leg = box(0.3, 2.0, 0.3, 0x4a5a68);
+        leg.position.set(lx, -0.5, cz + dz);
+        leg.castShadow = true;
+        scene.add(leg);
+      });
+    }
+  });
+
+  // ─────────────────────────────────────
+  // PRODUCTS ON CONVEYOR (boxes + cylinders)
+  // ─────────────────────────────────────
+  const PRODUCT_COLORS = [0x0070e0, 0xf05a00, 0x00a84f, 0x7c3aed, 0xd92b3a, 0xc8860a, 0x0090c8];
+  const products = [];
+
+  function makeProduct(type, col) {
+    const g = grp();
+    if (type === 0) {
+      // cardboard box
+      const b = box(2.2, 2.2, 2.2, 0xd4a84a);
+      b.castShadow = true;
+      g.add(b);
+      const label = box(1.8, 0.8, 0.1, col);
+      label.position.set(0, 0, 1.12);
+      g.add(label);
+    } else if (type === 1) {
+      // cylinder can
+      const can = cyl(0.8, 0.8, 2.5, 12, col);
+      can.castShadow = true;
+      g.add(can);
+      const lid = cyl(0.82, 0.82, 0.15, 12, 0xaabbcc);
+      lid.position.y = 1.3;
+      g.add(lid);
+    } else {
+      // flat tray
+      const tray = box(2.8, 0.8, 2.0, col);
+      tray.castShadow = true;
+      g.add(tray);
+      for (let i = 0; i < 3; i++) {
+        const item = cyl(0.25, 0.25, 0.6, 8, 0xeeeeee);
+        item.position.set(-0.8 + i * 0.8, 0.7, 0);
+        g.add(item);
+      }
+    }
+    return g;
+  }
+
+  // Spawn products on each conveyor line
+  CONV_Z.forEach((cz, li) => {
+    for (let i = 0; i < 7; i++) {
+      const type = Math.floor(Math.random() * 3);
+      const col  = PRODUCT_COLORS[Math.floor(Math.random() * PRODUCT_COLORS.length)];
+      const prod = makeProduct(type, col);
+      prod.position.set(-CONV_LEN / 2 + i * 15 + Math.random() * 6, 2.2, cz);
+      prod._speed  = 0.04 + li * 0.01 + Math.random() * 0.02;
+      prod._convZ  = cz;
+      prod._line   = li;
+      prod._type   = type;
+      prod._col    = col;
+      prod._rotDir = Math.random() > 0.5 ? 1 : -1;
+      scene.add(prod);
+      products.push(prod);
+    }
+  });
+
+  // ─────────────────────────────────────
+  // ROBOT ARMS  (3 units)
+  // ─────────────────────────────────────
+  const robots = [];
+
+  function makeRobotArm(x, z) {
+    const g = grp();
+
+    // Base pedestal
+    const base = cyl(1.4, 1.6, 1.5, 12, 0x4a5a70);
+    base.position.y = 0.75;
+    base.castShadow = true;
+    g.add(base);
+
+    // Waist rotation body
+    const waist = grp();
+    waist.position.y = 1.5;
+    g.add(waist);
+
+    const body = box(1.4, 1.6, 1.2, 0x607080);
+    body.castShadow = true;
+    waist.add(body);
+
+    // Lower arm
+    const lowerArm = grp();
+    lowerArm.position.y = 0.8;
+    waist.add(lowerArm);
+
+    const lArm = box(0.6, 4.5, 0.6, 0x7090a8);
+    lArm.position.y = 2.25;
+    lArm.castShadow = true;
+    lowerArm.add(lArm);
+
+    // Elbow joint
+    const elbowJoint = cyl(0.5, 0.5, 0.7, 10, 0x4a5a70);
+    elbowJoint.rotation.z = Math.PI / 2;
+    elbowJoint.position.y = 4.5;
+    lowerArm.add(elbowJoint);
+
+    // Upper arm
+    const upperArm = grp();
+    upperArm.position.y = 4.5;
+    lowerArm.add(upperArm);
+
+    const uArm = box(0.5, 3.5, 0.5, 0x7090a8);
+    uArm.position.y = 1.75;
+    uArm.castShadow = true;
+    upperArm.add(uArm);
+
+    // Wrist + tool
+    const tool = grp();
+    tool.position.y = 3.5;
+    upperArm.add(tool);
+
+    const wrist = cyl(0.4, 0.4, 0.5, 8, 0x556677);
+    wrist.rotation.x = Math.PI / 2;
+    wrist.castShadow = true;
+    tool.add(wrist);
+
+    // End effector (gripper)
+    [-0.35, 0.35].forEach(dx => {
+      const finger = box(0.18, 0.06, 0.55, 0x90a0b0);
+      finger.position.set(dx, 0, 0.35);
+      tool.add(finger);
+    });
+
+    // Status light on body
+    const statusLight = cyl(0.2, 0.2, 0.4, 8, 0x00ff44);
+    statusLight.position.set(0.75, 0.6, 0.65);
+    waist.add(statusLight);
+
+    g.position.set(x, 0, z);
+
+    return {
+      group: g, waist, lowerArm, upperArm, tool,
+      t: Math.random() * Math.PI * 2,
+      statusLight,
+    };
+  }
+
+  const robotPositions = [[-25, -8], [0, 8], [25, -8]];
+  robotPositions.forEach(([rx, rz]) => {
+    const robot = makeRobotArm(rx, rz);
+    scene.add(robot.group);
+    robots.push(robot);
+  });
+
+  // ─────────────────────────────────────
+  // CONTROL PANELS / MACHINES
+  // ─────────────────────────────────────
+  function makeControlPanel(x, z, h, col) {
+    const g = grp();
+    const panel = box(3.5, h, 1.0, col);
+    panel.position.y = h / 2;
+    panel.castShadow = true;
+    g.add(panel);
+
+    // Door detail
+    const door = box(2.2, h * 0.7, 0.12, 0x7090a8);
+    door.position.set(0, h * 0.15, 0.56);
+    g.add(door);
+
+    // Indicator lights row
+    const lightColors = [0x00ff00, 0xffaa00, 0xff3030, 0x0088ff];
+    lightColors.forEach((lc, i) => {
+      const led = box(0.3, 0.3, 0.15, lc);
+      led.position.set(-0.6 + i * 0.42, h * 0.72, 0.58);
+      g.add(led);
+    });
+
+    // HMI screen
+    const screen = box(1.6, 1.0, 0.08, 0x112233);
+    screen.position.set(0, h * 0.55, 0.56);
+    g.add(screen);
+    const screenGlow = box(1.5, 0.9, 0.05, 0x003399);
+    screenGlow.position.set(0, h * 0.55, 0.62);
+    g.add(screenGlow);
+
+    // Label strip
+    const label = box(3.4, 0.35, 0.12, 0x334455);
+    label.position.set(0, h - 0.2, 0.56);
+    g.add(label);
+
+    // Ventilation grille
+    for (let vy = 0; vy < 4; vy++) {
+      const vent = box(2.8, 0.08, 0.1, 0x445566);
+      vent.position.set(0, 0.4 + vy * 0.25, 0.56);
+      g.add(vent);
+    }
+
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  // Place panels along sides
+  const panelConfigs = [
+    [-40, -22, 5.5, 0x3a5a78],
+    [-20, -22, 4.5, 0x486070],
+    [0,   -22, 6.0, 0x2e4a60],
+    [20,  -22, 5.0, 0x3a5a78],
+    [40,  -22, 4.5, 0x2a4058],
+    [-40,  22, 5.5, 0x4a6070],
+    [0,    22, 4.0, 0x3a5070],
+    [40,   22, 5.5, 0x3a5a78],
+  ];
+  panelConfigs.forEach(([x, z, h, col]) => {
+    scene.add(makeControlPanel(x, z, h, col));
+  });
+
+  // ─────────────────────────────────────
+  // VFDs (wall-mounted drives)
+  // ─────────────────────────────────────
+  function makeVFD(x, y, z) {
+    const g = grp();
+    const body = box(1.2, 2.0, 0.5, 0x2a3a4a);
+    g.add(body);
+    const disp = box(0.9, 0.55, 0.06, 0x001133);
+    disp.position.set(0, 0.45, 0.28);
+    g.add(disp);
+    const dispGlow = box(0.82, 0.48, 0.04, 0x002266);
+    dispGlow.position.set(0, 0.45, 0.31);
+    g.add(dispGlow);
+    // Parameter buttons
+    for (let bx = -0.3; bx <= 0.3; bx += 0.3) {
+      const btn = box(0.18, 0.18, 0.08, 0x445566);
+      btn.position.set(bx, -0.3, 0.28);
+      g.add(btn);
+    }
+    const label = box(1.1, 0.25, 0.06, 0x112244);
+    label.position.set(0, 0.85, 0.28);
+    g.add(label);
+    g.position.set(x, y, z);
+    return g;
+  }
+
+  [[-44, 3, -18], [-44, 3, 0], [-44, 3, 18],
+   [44, 3, -18],  [44, 3, 0],  [44, 3, 18]].forEach(([x, y, z]) => {
+    scene.add(makeVFD(x, y, z));
+  });
+
+  // ─────────────────────────────────────
+  // SPARKS / WELDING STATION
+  // ─────────────────────────────────────
+  const sparks = [];
+  const sparkGeo = new THREE.SphereGeometry(0.12, 4, 4);
+
+  function createSpark(ox, oy, oz) {
+    const mat = new THREE.MeshBasicMaterial({
+      color: Math.random() > 0.5 ? 0xffcc00 : 0xff6600,
+      transparent: true
+    });
+    const s = new THREE.Mesh(sparkGeo, mat);
+    s.position.set(ox + (Math.random() - 0.5), oy, oz + (Math.random() - 0.5));
+    s._vx  = (Math.random() - 0.5) * 0.18;
+    s._vy  = 0.1 + Math.random() * 0.2;
+    s._vz  = (Math.random() - 0.5) * 0.18;
+    s._life = 0.8 + Math.random() * 0.6;
+    s._ox = ox; s._oy = oy; s._oz = oz;
+    scene.add(s);
+    sparks.push(s);
+    return s;
+  }
+
+  // Welding station box
+  const weldBox = box(4, 4, 4, 0x3a4a58);
+  weldBox.position.set(20, 2, 0);
+  weldBox.castShadow = true;
+  scene.add(weldBox);
+  const weldGlow = new THREE.PointLight(0x4488ff, 0, 12);
+  weldGlow.position.set(20, 4, 0);
+  scene.add(weldGlow);
+
+  // ─────────────────────────────────────
+  // SAFETY BARRIERS (yellow/black)
+  // ─────────────────────────────────────
+  function makeSafetyBarrier(x1, z1, x2, z2) {
+    const dx = x2 - x1, dz = z2 - z1;
+    const len = Math.sqrt(dx * dx + dz * dz);
+    const angle = Math.atan2(dz, dx);
+    const g = grp();
+    const bar = box(len, 0.25, 0.25, 0xf0b800);
+    bar.rotation.y = -angle;
+    g.add(bar);
+    // Post at each end
+    [0, 1].forEach(t => {
+      const post = box(0.2, 2.5, 0.2, 0x222222);
+      post.position.set(t === 0 ? 0 : dx, -1.0, t === 0 ? 0 : dz);
+      g.add(post);
+    });
+    g.position.set(x1, 1.35, z1);
+    return g;
+  }
+
+  [
+    [-12, -20, 12, -20],
+    [-12,  20, 12,  20],
+    [-50, -6,  -50, 6],
+    [50,  -6,   50, 6],
+  ].forEach(p => scene.add(makeSafetyBarrier(...p)));
+
+  // ─────────────────────────────────────
+  // FORKLIFT (simple AGV)
+  // ─────────────────────────────────────
+  const forklifts = [];
+  function makeForklift(x, z, dir) {
+    const g = grp();
+    // Body
+    const body = box(4, 2.5, 2.5, 0xf0c000);
+    body.position.y = 1.25;
+    body.castShadow = true;
+    g.add(body);
+    // Cabin
+    const cabin = box(2, 2.2, 2.2, 0xe0b000);
+    cabin.position.set(-0.8, 3.35, 0);
+    g.add(cabin);
+    // Mast
+    const mast = box(0.35, 5, 0.35, 0x888888);
+    mast.position.set(2.2, 2.5, 0);
+    g.add(mast);
+    // Forks
+    [-0.6, 0.6].forEach(fz => {
+      const fork = box(2.5, 0.2, 0.25, 0x666666);
+      fork.position.set(2.2, 1.2, fz);
+      g.add(fork);
+    });
+    // Wheels
+    [[-1.5, -1.3], [-1.5, 1.3], [1.5, -1.3], [1.5, 1.3]].forEach(([wx, wz]) => {
+      const wheel = cyl(0.55, 0.55, 0.5, 10, 0x222222);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(wx, 0.55, wz);
+      g.add(wheel);
+    });
+    // Warning light
+    const warnLight = cyl(0.22, 0.22, 0.45, 8, 0xff6600);
+    warnLight.position.set(-1, 4.7, 0);
+    g.add(warnLight);
+
+    g.position.set(x, 0, z);
+    g.rotation.y = dir;
+    return { group: g, t: Math.random() * Math.PI * 2, baseX: x, baseZ: z };
+  }
+
+  forklifts.push(makeForklift(-38, 10, 0));
+  forklifts.push(makeForklift(38, -10, Math.PI));
+  forklifts.forEach(f => scene.add(f.group));
+
+  // ─────────────────────────────────────
+  // PALLETS & STACKED BOXES
+  // ─────────────────────────────────────
+  function makePallet(x, z) {
+    const g = grp();
+    const pallet = box(5, 0.3, 4, 0xb8843a);
+    pallet.position.y = 0.15;
+    g.add(pallet);
+    // Slats
+    for (let i = -1.8; i <= 1.8; i += 1.2) {
+      const slat = box(5, 0.15, 0.4, 0x9a6a28);
+      slat.position.set(0, 0.22, i);
+      g.add(slat);
+    }
+    // Stack of boxes on pallet
+    for (let row = 0; row < 2; row++) {
+      for (let col = 0; col < 3; col++) {
+        const b = box(1.5, 1.5, 1.3, PRODUCT_COLORS[Math.floor(Math.random() * PRODUCT_COLORS.length)]);
+        b.position.set(-1.3 + col * 1.4, 0.3 + 1.55 + row * 1.6, -0.7 + (col % 2) * 0.5);
+        b.castShadow = true;
+        g.add(b);
+      }
+    }
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  [[-42, -10], [-42, 4], [42, -10], [42, 4],
+   [-32, -24], [32, -24], [-32, 24], [32, 24]].forEach(([x, z]) => {
+    scene.add(makePallet(x, z));
+  });
+
+  // ─────────────────────────────────────
+  // OVERHEAD CRANE (gantry)
+  // ─────────────────────────────────────
+  const craneGroup = grp();
+  // Main beam
+  const craneBeam = box(100, 0.8, 1.0, 0x607090);
+  craneBeam.position.y = 20;
+  craneGroup.add(craneBeam);
+  // Trolley on beam
+  const trolley = box(4, 1.5, 2.2, 0x4a6080);
+  trolley.position.set(0, 19.3, 0);
+  craneGroup.add(trolley);
+  // Hoist cable
+  const cable = box(0.15, 6, 0.15, 0x333333);
+  cable.position.set(0, 16, 0);
+  craneGroup.add(cable);
+  // Hook
+  const hook = cyl(0.4, 0.3, 0.8, 8, 0x888888);
+  hook.position.set(0, 12.8, 0);
+  craneGroup.add(hook);
+  // Side rails
+  [-40, 40].forEach(x => {
+    const rail = box(1.0, 1.0, 80, 0x556070);
+    rail.position.set(x, 21, 0);
+    craneGroup.add(rail);
+  });
+  scene.add(craneGroup);
+
+  // ─────────────────────────────────────
+  // FLOATING DATA PARTICLES (IIoT signals)
+  // ─────────────────────────────────────
+  const IIOT_COUNT = 120;
+  const iiotPositions = new Float32Array(IIOT_COUNT * 3);
+  const iiotVelocities = [];
+  for (let i = 0; i < IIOT_COUNT; i++) {
+    iiotPositions[i * 3]     = (Math.random() - 0.5) * 90;
+    iiotPositions[i * 3 + 1] = 2 + Math.random() * 16;
+    iiotPositions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+    iiotVelocities.push({
+      vx: (Math.random() - 0.5) * 0.04,
+      vy: 0.02 + Math.random() * 0.04,
+      vz: (Math.random() - 0.5) * 0.04,
+    });
+  }
+  const iiotGeo  = new THREE.BufferGeometry();
+  const iiotAttr = new THREE.BufferAttribute(iiotPositions, 3);
+  iiotGeo.setAttribute('position', iiotAttr);
+  const iiotMat  = new THREE.PointsMaterial({ color: 0x0070e0, size: 0.28, transparent: true, opacity: 0.7, sizeAttenuation: true });
+  scene.add(new THREE.Points(iiotGeo, iiotMat));
+
+  // Orange IIoT stream (second set)
+  const iiotPositions2 = new Float32Array(IIOT_COUNT * 3);
+  const iiotVelocities2 = [];
+  for (let i = 0; i < IIOT_COUNT; i++) {
+    iiotPositions2[i * 3]     = (Math.random() - 0.5) * 90;
+    iiotPositions2[i * 3 + 1] = 2 + Math.random() * 14;
+    iiotPositions2[i * 3 + 2] = (Math.random() - 0.5) * 40;
+    iiotVelocities2.push({
+      vx: (Math.random() - 0.5) * 0.03,
+      vy: 0.015 + Math.random() * 0.035,
+      vz: (Math.random() - 0.5) * 0.03,
+    });
+  }
+  const iiotGeo2  = new THREE.BufferGeometry();
+  const iiotAttr2 = new THREE.BufferAttribute(iiotPositions2, 3);
+  iiotGeo2.setAttribute('position', iiotAttr2);
+  scene.add(new THREE.Points(iiotGeo2, new THREE.PointsMaterial({ color: 0xf05a00, size: 0.22, transparent: true, opacity: 0.6, sizeAttenuation: true })));
+
+  // ─────────────────────────────────────
+  // CAMERA TARGETS PER VIEW
+  // ─────────────────────────────────────
+  const CAM_T = {
+    home:   { x: 0,   y: 28, z: 62, lx: 0,   ly: 2, lz: 0   },
+    map:    { x: -18, y: 24, z: 58, lx: -5,  ly: 2, lz: -5  },
+    module: { x: 16,  y: 26, z: 55, lx: 5,   ly: 2, lz: 0   },
+    quiz:   { x: -8,  y: 30, z: 60, lx: 0,   ly: 2, lz: 0   },
+    cert:   { x: 0,   y: 22, z: 65, lx: 0,   ly: 5, lz: 0   },
+  };
+  let camTgt = { ...CAM_T.home };
+  window.setBgView = function(v) { camTgt = { ...(CAM_T[v] || CAM_T.home) }; };
+
+  // ─────────────────────────────────────
+  // ANIMATE
+  // ─────────────────────────────────────
+  let tick = 0;
+  let sparkTimer = 0;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    tick += 0.012;
+
+    // Camera smooth lerp
+    cam.position.x += (camTgt.x + Math.sin(tick * 0.18) * 5 - cam.position.x) * 0.006;
+    cam.position.y += (camTgt.y + Math.cos(tick * 0.12) * 2 - cam.position.y) * 0.006;
+    cam.position.z += (camTgt.z + Math.sin(tick * 0.09) * 3 - cam.position.z) * 0.006;
+    cam.lookAt(
+      camTgt.lx + Math.sin(tick * 0.1) * 2,
+      camTgt.ly,
+      camTgt.lz + Math.cos(tick * 0.1) * 2
+    );
+
+    // Move products along conveyors
+    products.forEach(p => {
+      p.position.x += p._speed;
+      if (p.position.x > CONV_LEN / 2 + 5) {
+        p.position.x = -CONV_LEN / 2 - 5;
+      }
+      // Slight bob
+      p.position.y = 2.2 + Math.sin(tick * 2 + p._convZ) * 0.03;
+    });
+
+    // Animate robot arms
+    robots.forEach((r, i) => {
+      r.t += 0.008 + i * 0.002;
+      // Waist rotates slowly
+      r.waist.rotation.y = Math.sin(r.t * 0.6) * 0.9;
+      // Lower arm swings
+      r.lowerArm.rotation.x = Math.sin(r.t * 0.8 + 1) * 0.45 - 0.3;
+      // Upper arm counter-swings
+      r.upperArm.rotation.x = Math.sin(r.t * 0.8 + 2) * 0.4 + 0.2;
+      // Tool/gripper rotates
+      r.tool.rotation.z = Math.sin(r.t * 1.5) * 0.25;
+      // Status light blinks
+      const blinkOn = Math.sin(r.t * 6) > 0;
+      r.statusLight.material.color.setHex(blinkOn ? 0x00ff44 : 0x004411);
+      r.statusLight.material.emissive = new THREE.Color(blinkOn ? 0x00aa22 : 0x000000);
+    });
+
+    // Forklift patrol
+    forklifts.forEach((f, i) => {
+      f.t += 0.008;
+      const range = 22;
+      f.group.position.x = f.baseX + Math.sin(f.t + i * Math.PI) * range * 0.4;
+      f.group.position.z = f.baseZ + Math.cos(f.t * 0.5 + i * Math.PI) * 8;
+      // Face direction of travel
+      const dx = Math.cos(f.t + i * Math.PI) * range * 0.4 * 0.008;
+      if (Math.abs(dx) > 0.001) f.group.rotation.y = dx > 0 ? 0 : Math.PI;
+    });
+
+    // Gantry crane trolley move
+    craneGroup.children[1].position.x = Math.sin(tick * 0.3) * 35;
+    craneGroup.children[2].position.x = Math.sin(tick * 0.3) * 35;
+    craneGroup.children[3].position.x = Math.sin(tick * 0.3) * 35;
+
+    // Welding sparks
+    sparkTimer += 0.012;
+    if (sparkTimer > 0.18) {
+      sparkTimer = 0;
+      for (let i = 0; i < 6; i++) createSpark(20, 4, 0);
+    }
+    // Weld glow pulse
+    weldGlow.intensity = 0.4 + Math.sin(tick * 8) * 0.35;
+    weldGlow.color.setHex(Math.random() > 0.5 ? 0x4488ff : 0x88ccff);
+
+    // Update sparks
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      s._life -= 0.032;
+      s.position.x += s._vx;
+      s.position.y += s._vy;
+      s.position.z += s._vz;
+      s._vy -= 0.008; // gravity
+      s.material.opacity = Math.max(0, s._life);
+      s.scale.setScalar(s._life);
+      if (s._life <= 0) {
+        scene.remove(s);
+        sparks.splice(i, 1);
+      }
+    }
+
+    // IIoT particles float upward
+    for (let i = 0; i < IIOT_COUNT; i++) {
+      iiotPositions[i * 3]     += iiotVelocities[i].vx;
+      iiotPositions[i * 3 + 1] += iiotVelocities[i].vy;
+      iiotPositions[i * 3 + 2] += iiotVelocities[i].vz;
+      if (iiotPositions[i * 3 + 1] > 22) {
+        iiotPositions[i * 3 + 1] = 1;
+        iiotPositions[i * 3]     = (Math.random() - 0.5) * 90;
+        iiotPositions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+      }
+      iiotPositions2[i * 3]     += iiotVelocities2[i].vx;
+      iiotPositions2[i * 3 + 1] += iiotVelocities2[i].vy;
+      iiotPositions2[i * 3 + 2] += iiotVelocities2[i].vz;
+      if (iiotPositions2[i * 3 + 1] > 20) {
+        iiotPositions2[i * 3 + 1] = 1;
+        iiotPositions2[i * 3]     = (Math.random() - 0.5) * 90;
+        iiotPositions2[i * 3 + 2] = (Math.random() - 0.5) * 40;
+      }
+    }
+    iiotAttr.needsUpdate  = true;
+    iiotAttr2.needsUpdate = true;
+
+    renderer.render(scene, cam);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    cam.aspect = window.innerWidth / window.innerHeight;
+    cam.updateProjectionMatrix();
+  });
+
+})();
+
+// ═══════════════════════════════════════════════════════
+// COURSE DATA
+// ═══════════════════════════════════════════════════════
+const TIERS = [
+  { id:0, label:'ZERO',   title:'Foundation',       color:'#8899aa', short:'Foundation' },
+  { id:1, label:'LVL 1',  title:'Input Side',       color:'#2ee88a', short:'Sensors' },
+  { id:2, label:'LVL 2',  title:'The Brain (PLC)',   color:'#0090ff', short:'PLC' },
+  { id:3, label:'LVL 3',  title:'Output Side',      color:'#b060ff', short:'Outputs' },
+  { id:4, label:'LVL 4',  title:'Motor Control',    color:'#ff7a00', short:'Drives' },
+  { id:5, label:'LVL 5',  title:'Communication',    color:'#ff3a5c', short:'Networks' },
+  { id:6, label:'HERO',   title:'System Integration',color:'#ffd500', short:'Hero' },
+];
+
+const MODULES = [
+  // ── TIER 0: Foundation ──────────────────────────────────────────────
+  {
+    id:0, tier:0, icon:'🏭', title:'What is Industrial Automation?', time:'12 min',
+    desc:'Understand what industrial automation is, why it exists, and where it is applied in the real world.',
+    content: `
+<div class="lesson-section">
+  <div class="ls-head">Definition & Purpose</div>
+  <div class="ls-body">
+    <strong>Industrial automation</strong> is the use of control systems — computers, PLCs, robots, and smart instruments — to automatically operate industrial processes, machines, and equipment with <strong>minimal human intervention</strong>.<br><br>
+    The goal is to improve: <strong>efficiency</strong> (faster production), <strong>consistency</strong> (same quality every time), <strong>safety</strong> (removing humans from hazardous processes), and <strong>cost</strong> (lower labor per unit).
+  </div>
+  <div class="flow-chain" style="margin-top:14px;">
+    <div class="fc-node" style="background:rgba(0,100,220,0.08);color:#0060c0;">Manual Labour</div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(0,100,220,0.08);color:#0060c0;">Mechanical Automation</div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(0,100,220,0.08);color:#0060c0;">Electrical Automation</div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(255,122,0,0.15);color:#ff9a40;">PLC/Computer Control</div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(255,213,0,0.12);color:#ffd500;">Smart / Industry 4.0</div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Real-World Applications</div>
+  <div class="g3" style="margin-top:4px;">
+    <div class="ic">
+      <div class="ic-icon">📦</div>
+      <div class="ic-title">Packaging Industry</div>
+      <div class="ic-text">Stretch wrappers, strapping machines, VFFS/HFFS filling machines. Speed: 60–200 packs/min with PLC & VFD control.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🚗</div>
+      <div class="ic-title">Automotive Assembly</div>
+      <div class="ic-text">Robot welding arms, conveyor systems, vision inspection. Fully automated body-in-white assembly lines.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🏗️</div>
+      <div class="ic-title">Process Industry</div>
+      <div class="ic-text">Chemical plants, refineries, water treatment — continuous 24/7 PID control of temperature, flow, pressure, level.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">⚡</div>
+      <div class="ic-title">Energy & Power</div>
+      <div class="ic-text">Generator synchronisation, load distribution, EV battery management systems — precision electrical control.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🌾</div>
+      <div class="ic-title">Food & Beverage</div>
+      <div class="ic-text">Mixing, bottling, pasteurisation, CIP (Clean-In-Place) cycles. Hygiene and recipe management by PLC.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🛤️</div>
+      <div class="ic-title">Material Handling</div>
+      <div class="ic-text">Conveyor networks, sortation, palletisers, AGVs. Each drive controlled by VFD with PLC coordination.</div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Why Automate? — The 5 Drivers</div>
+  <div class="g2">
+    <div class="step-list">
+      <div class="step-item"><span class="step-n">01</span><div><strong>Productivity</strong> — Machines run 24/7/365, no breaks, no fatigue. 3× faster than manual processes.</div></div>
+      <div class="step-item"><span class="step-n">02</span><div><strong>Quality</strong> — Every product built to the same specification. PLCs execute the exact same steps every cycle.</div></div>
+      <div class="step-item"><span class="step-n">03</span><div><strong>Safety</strong> — Remove workers from hot, toxic, high-pressure, or moving-parts environments.</div></div>
+    </div>
+    <div class="step-list">
+      <div class="step-item"><span class="step-n">04</span><div><strong>Cost</strong> — Lower cost-per-unit. Initial investment recovered through efficiency gains.</div></div>
+      <div class="step-item"><span class="step-n">05</span><div><strong>Data</strong> — SCADA/HMI systems capture every parameter — enabling traceability and OEE analysis.</div></div>
+    </div>
+  </div>
+  <div class="key-points" style="margin-top:10px;">
+    <div class="kp-head">Key Industry Terms</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">OEE</span> — Overall Equipment Effectiveness. Measures availability × performance × quality.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">PLC</span> — Programmable Logic Controller. The digital brain of an automated system.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">SCADA</span> — Supervisory Control and Data Acquisition. Site-level monitoring and control.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">HMI</span> — Human-Machine Interface. The operator touchscreen at the machine.</div>
+  </div>
+</div>`,
+    quiz: [
+      { q:'What is the PRIMARY goal of industrial automation?',
+        opts:['Eliminate all workers from a factory','Automatically operate industrial processes with minimal human intervention','Connect machines to the internet','Replace sensors with cameras'],
+        ans:1, exp:'Automation aims to operate processes automatically, minimising human intervention to improve efficiency, quality, safety, and cost — not necessarily eliminating all workers.' },
+      { q:'Which of these is NOT a key benefit of automation?',
+        opts:['Higher productivity (24/7 operation)','More human operators needed per machine','Consistent product quality','Improved worker safety'],
+        ans:1, exp:'Automation actually reduces the number of operators needed per machine. Key benefits are productivity, quality, safety, and cost reduction.' },
+      { q:'OEE stands for:',
+        opts:['Output Efficiency Engineering','Overall Equipment Effectiveness','Operator Enabled Execution','Open Ethernet Extension'],
+        ans:1, exp:'OEE = Availability × Performance × Quality. It is the standard KPI for measuring how effectively automated manufacturing equipment is used.' },
+    ]
+  },
+
+  {
+    id:1, tier:0, icon:'🏗️', title:'The 5-Layer IACS Architecture', time:'15 min',
+    desc:'Understand the five layers that every industrial control system is built on — from sensors to actuators.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Architecture Overview</div>
+  <div class="ls-body">Every industrial automation system — no matter how simple or complex — is built on <strong>5 fundamental layers</strong>. Signals always flow from Layer 1 (sensors) through to Layer 5 (actuators). Understanding this model lets you mentally map any machine you encounter.</div>
+  <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(90,100,115,0.05);border:1px solid rgba(90,100,115,0.12);border-radius:7px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:#8899aa;width:32px;text-align:center;">1</div>
+      <div style="font-size:22px;">📡</div>
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#1a3050;">INPUT DEVICES (Sensors)</div><div style="font-size:12px;color:var(--text);">Detect real-world conditions (temperature, position, pressure, presence). Convert physical reality into electrical signals.</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(0,100,220,0.04);border:1px solid rgba(0,144,255,0.12);border-radius:7px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:#0060c0;width:32px;text-align:center;">2</div>
+      <div style="font-size:22px;">🔌</div>
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#1a3050;">INPUT MODULE</div><div style="font-size:12px;color:var(--text);">Receives signals from sensors. Provides electrical isolation, filtering, and A/D conversion. Delivers clean data to the PLC.</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,213,0,0.05);border:1px solid rgba(255,213,0,0.15);border-radius:7px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:#ffd500;width:32px;text-align:center;">3</div>
+      <div style="font-size:22px;">🧠</div>
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#1a3050;">LOGIC MODULE (PLC)</div><div style="font-size:12px;color:var(--text);">The industrial computer. Executes the user-written control program in a continuous scan cycle. Makes all control decisions.</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(176,96,255,0.05);border:1px solid rgba(176,96,255,0.12);border-radius:7px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:#b060ff;width:32px;text-align:center;">4</div>
+      <div style="font-size:22px;">📤</div>
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#1a3050;">OUTPUT MODULE</div><div style="font-size:12px;color:var(--text);">Receives commands from PLC and sends electrical signals to field devices. Relay, transistor, or analog output types.</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,58,92,0.05);border:1px solid rgba(255,58,92,0.12);border-radius:7px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:#ff3a5c;width:32px;text-align:center;">5</div>
+      <div style="font-size:22px;">⚡</div>
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#1a3050;">OUTPUT DEVICES (Actuators)</div><div style="font-size:12px;color:var(--text);">Perform physical actions — motors, valves, solenoids, cylinders, indicator lights. The "hands" of the system.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">PLC Scan Cycle — How the Brain Works</div>
+  <div class="ls-body" style="margin-bottom:12px;">The PLC does <strong>not</strong> respond instantly to inputs. It executes a continuous loop called the <strong>Scan Cycle</strong>, typically every 1–20 milliseconds:</div>
+  <div class="g4">
+    <div class="ic">
+      <div class="ic-icon">📥</div>
+      <div class="ic-title">1. Read Inputs</div>
+      <div class="ic-text">Snapshot all input channel states into input image register. This is what the program "sees".</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">⚙️</div>
+      <div class="ic-title">2. Execute Program</div>
+      <div class="ic-text">Run through all ladder rungs / function blocks from first to last. Compute output states.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">📤</div>
+      <div class="ic-title">3. Update Outputs</div>
+      <div class="ic-text">Write computed output states from output image register to actual output channels.</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🔁</div>
+      <div class="ic-title">4. Repeat Forever</div>
+      <div class="ic-text">Cycle repeats every 1–20ms. A 10ms scan = 100 complete cycles per second.</div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Real Example — Shrink Tunnel System</div>
+  <div class="flow-chain">
+    <div class="fc-node" style="background:rgba(0,168,79,0.08);color:#00a84f;">🌡️ Temp Sensor<br><span style="font-size:9px;color:var(--text);">Analog 4-20mA</span></div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(0,100,220,0.06);color:#0060c0;">🔌 Input Module<br><span style="font-size:9px;color:var(--text);">A/D Convert</span></div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(200,134,10,0.08);color:#c8860a;">🧠 PLC Logic<br><span style="font-size:9px;color:var(--text);">If Temp &lt; Set</span></div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(124,58,237,0.08);color:#7c3aed;">📤 Output Module<br><span style="font-size:9px;color:var(--text);">Relay / SSR</span></div>
+    <div class="fc-arr">→</div>
+    <div class="fc-node" style="background:rgba(217,43,58,0.08);color:#d92b3a;">🔥 Heater ON<br><span style="font-size:9px;color:var(--text);">Output Device</span></div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'In the 5-Layer IACS model, which layer converts sensor signals into data the PLC can read?',
+        opts:['Layer 1 — Input Devices','Layer 2 — Input Module','Layer 3 — PLC','Layer 5 — Output Devices'],
+        ans:1, exp:'The Input Module (Layer 2) receives raw electrical signals from sensors and converts them (A/D conversion, isolation, filtering) into digital data that the PLC CPU can process.' },
+      { q:'In what order does the PLC scan cycle run?',
+        opts:['Execute → Read → Update → Repeat','Update → Execute → Read → Repeat','Read Inputs → Execute Program → Update Outputs → Repeat','Read → Update → Execute → Repeat'],
+        ans:2, exp:'The PLC always follows: 1) Read all inputs into image register, 2) Execute the user program, 3) Write results to outputs, then repeat. This cycle takes typically 1–20ms.' },
+      { q:'The Output Module sends commands to:',
+        opts:['The PLC CPU','The Input Module','Field devices (actuators) such as motors, valves, and lights','The SCADA server'],
+        ans:2, exp:'The Output Module (Layer 4) receives digital commands from the PLC and converts them into electrical signals to drive field devices (actuators) — Layer 5 of the architecture.' },
+    ]
+  },
+
+  // ── TIER 1: Sensors ─────────────────────────────────────────────────
+  {
+    id:2, tier:1, icon:'📡', title:'Digital & Analog Input Devices', time:'18 min',
+    desc:'Deep dive into sensors — digital ON/OFF types and analog continuous-value types, with wiring and signal standards.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Digital Input Sensors — ON / OFF World</div>
+  <div class="ls-body" style="margin-bottom:12px;">Digital sensors output only two states: <strong>24V DC = ON (Logic 1)</strong> or <strong>0V DC = OFF (Logic 0)</strong>. They are the most common sensor type in industrial machines.</div>
+  <div class="g4">
+    <div class="ic">
+      <div class="ic-icon">🟢</div>
+      <div class="ic-title">Push Button</div>
+      <div class="ic-text">Momentary or latching. Used for Start, Stop, Reset, E-Stop. NO (Normally Open) or NC contact.</div>
+      <div class="ic-badge b">24V / 0V</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🔴</div>
+      <div class="ic-title">Photoelectric Sensor</div>
+      <div class="ic-text">Light beam detection. Retro-reflective, through-beam, or diffuse. Detects product presence on conveyors.</div>
+      <div class="ic-badge b">24V / 0V</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🔒</div>
+      <div class="ic-title">Limit Switch</div>
+      <div class="ic-text">Physical contact switch. Detects end-position of actuators, open/close of doors, end of stroke.</div>
+      <div class="ic-badge b">24V / 0V</div>
+    </div>
+    <div class="ic">
+      <div class="ic-icon">🧲</div>
+      <div class="ic-title">Proximity Sensor</div>
+      <div class="ic-text">Non-contact. Inductive (metal only) or capacitive (any material). Detects without physical contact.</div>
+      <div class="ic-badge b">24V / 0V</div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Analog Input Sensors — Continuous Variable World</div>
+  <div class="ls-body" style="margin-bottom:12px;">Analog sensors output a <strong>continuously variable signal</strong> proportional to the physical quantity being measured. The PLC's analog input module converts this to a number (0–4095 for 12-bit, 0–65535 for 16-bit).</div>
+  <div class="g4">
+    <div class="ic ora">
+      <div class="ic-icon">🌡️</div>
+      <div class="ic-title">Temperature</div>
+      <div class="ic-text">RTD (PT100) or thermocouple via transmitter. Measures °C/°F in tunnels, ovens, processes.</div>
+      <div class="ic-badge o">0–10V / 4–20mA</div>
+    </div>
+    <div class="ic ora">
+      <div class="ic-icon">💧</div>
+      <div class="ic-title">Pressure</div>
+      <div class="ic-text">Gauge or differential pressure transmitter. Bar, PSI, kPa. Used in pneumatics, hydraulics, fluid systems.</div>
+      <div class="ic-badge o">4–20mA</div>
+    </div>
+    <div class="ic ora">
+      <div class="ic-icon">⚖️</div>
+      <div class="ic-title">Load Cell</div>
+      <div class="ic-text">Strain-gauge based weight/force measurement. Used in filling machines, tension control, weighbridges.</div>
+      <div class="ic-badge o">0–10V / 4–20mA</div>
+    </div>
+    <div class="ic ora">
+      <div class="ic-icon">🌊</div>
+      <div class="ic-title">Flow Meter</div>
+      <div class="ic-text">Electromagnetic, ultrasonic, or Coriolis. Measures liquid/gas flow rate in litres/min or m³/hr.</div>
+      <div class="ic-badge o">4–20mA / Pulse</div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head purp">Digital vs Analog — Key Comparison</div>
+  <table class="ctbl">
+    <thead><tr>
+      <th style="color:var(--text);">Feature</th>
+      <th style="color:var(--cyan);">Digital Input</th>
+      <th style="color:var(--orange);">Analog Input</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Signal Type</td><td><span class="badge b-blue">ON/OFF (Discrete)</span></td><td><span class="badge b-ora">Continuous (Variable)</span></td></tr>
+      <tr><td>Values</td><td><span class="mono" style="color:var(--cyan);">0 or 1 only</span></td><td><span class="mono" style="color:var(--orange);">Any value within range</span></td></tr>
+      <tr><td>Signal Level</td><td><span class="mono" style="color:var(--cyan);">24V DC (ON) / 0V (OFF)</span></td><td><span class="mono" style="color:var(--orange);">0–10V DC or 4–20mA</span></td></tr>
+      <tr><td>PLC Module</td><td>Digital Input Module (DI)</td><td>Analog Input Module (AI + A/D)</td></tr>
+      <tr><td>Wiring</td><td>2-wire (+ and COM) or 3-wire</td><td>2-wire (4–20mA loop) or 3-wire (0–10V)</td></tr>
+      <tr><td>Typical Examples</td><td>Push button, Photo sensor, Proximity, Limit switch</td><td>Temperature, Pressure, Humidity, Load cell</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:12px;padding:10px 14px;background:rgba(255,213,0,0.06);border:1px solid rgba(255,213,0,0.18);border-radius:7px;font-size:12px;">
+    <strong style="color:var(--gold);">⚠ Wiring Rule:</strong> Always use shielded cable for analog signals in noisy industrial environments. Connect shield drain wire at ONE end only (typically at the control panel/PLC end) to avoid ground loops.
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Why 4–20mA (Not 0–20mA)?</div>
+  <div class="g2">
+    <div class="ls-body">The <strong>4mA live zero</strong> is one of the most clever design choices in industrial instrumentation:<br><br>
+    • <strong>4mA = 0% of range</strong> (e.g., 0°C, 0 bar)<br>
+    • <strong>20mA = 100% of range</strong> (e.g., 200°C, 10 bar)<br>
+    • <strong>0mA = FAULT</strong> — broken wire, power failure<br><br>
+    This means you can detect a <strong>broken wire</strong> (signal = 0mA) vs a valid zero-reading (signal = 4mA). The PLC can alarm on sensor failure — impossible with 0–10V voltage signals.
+    </div>
+    <div class="wave-area">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,144,255,0.6);margin-bottom:10px;">4–20mA SIGNAL MEANING:</div>
+      <svg width="100%" height="100" viewBox="0 0 300 100">
+        <line x1="30" y1="80" x2="30" y2="10" stroke="rgba(0,100,220,0.2)" stroke-width="1"/>
+        <line x1="30" y1="80" x2="290" y2="80" stroke="rgba(0,100,220,0.2)" stroke-width="1"/>
+        <line x1="30" y1="75" x2="290" y2="75" stroke="rgba(46,232,138,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="30" y1="20" x2="290" y2="20" stroke="rgba(255,122,0,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="2" y="78" fill="rgba(255,58,92,0.8)" font-size="8" font-family="monospace">0mA</text>
+        <text x="2" y="77" fill="rgba(46,232,138,0.8)" font-size="8" font-family="monospace" dy="0">4mA</text>
+        <text x="2" y="22" fill="rgba(200,90,0,0.9)" font-size="8" font-family="monospace">20mA</text>
+        <path d="M 30 75 Q 100 55 160 35 Q 220 18 280 20" fill="none" stroke="#ff7a00" stroke-width="2"/>
+        <text x="160" y="48" fill="rgba(200,90,0,0.8)" font-size="9" font-family="monospace">Sensor Value</text>
+        <text x="240" y="91" fill="rgba(46,232,138,0.6)" font-size="9" font-family="monospace">0%→100%</text>
+        <circle cx="30" cy="80" r="4" fill="rgba(255,58,92,0.8)"/>
+        <text x="35" y="94" fill="rgba(255,58,92,0.7)" font-size="8" font-family="monospace">FAULT</text>
+      </svg>
+    </div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'A photoelectric sensor outputs 24V when a product passes in front of it and 0V when clear. What type of signal is this?',
+        opts:['Analog','Digital (discrete)','PWM','Frequency'],
+        ans:1, exp:'24V or 0V is a classic digital (discrete) signal — only two possible states. This is the standard for ON/OFF sensors in industrial automation.' },
+      { q:'Why is 4–20mA preferred over 0–10V for long-distance analog signal transmission?',
+        opts:['4–20mA is cheaper','Current signals are not affected by cable resistance/voltage drop, and 4mA live-zero enables broken-wire detection','4–20mA works without a power supply','0–10V requires special amplifiers'],
+        ans:1, exp:'Current loop signals (4–20mA) maintain accuracy over long cable runs because resistance does not affect the current value. Additionally, the 4mA live zero lets the PLC distinguish a genuine zero reading from a broken wire (which shows 0mA).' },
+      { q:'An inductive proximity sensor will detect:',
+        opts:['Any material (metal, plastic, liquid)','Only ferrous (iron) metals','Metal objects only (ferrous and non-ferrous)','Only objects with a reflective surface'],
+        ans:2, exp:'Inductive proximity sensors detect metallic objects (both ferrous and non-ferrous metals like aluminium and copper) using an electromagnetic field. For non-metallic objects, a capacitive proximity sensor is required.' },
+      { q:'What does a 0mA reading on a 4–20mA analog input channel indicate?',
+        opts:['The measured value is exactly zero','The sensor cable is broken or sensor has lost power','The PLC input module has failed','The measurement range is exceeded'],
+        ans:1, exp:'In the 4–20mA standard, 0mA is not a valid measurement value — the minimum live signal is 4mA. A 0mA reading indicates a broken wire, short circuit, or sensor power failure.' },
+    ]
+  },
+
+  {
+    id:3, tier:1, icon:'🔌', title:'PLC Input Modules Deep Dive', time:'14 min',
+    desc:'Learn how input modules receive, condition, isolate, and convert sensor signals for the PLC CPU.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Role of the Input Module</div>
+  <div class="ls-body">The input module is the <strong>critical interface</strong> between the harsh industrial field and the sensitive PLC CPU. It handles: <strong>electrical isolation</strong> (protecting the CPU from field voltage spikes), <strong>signal conditioning</strong> (filtering noise), and <strong>A/D conversion</strong> (for analog modules).</div>
+  <div class="step-list" style="margin-top:12px;">
+    <div class="step-item"><span class="step-n">1</span>Sensor generates electrical signal (24V DC digital, or 4–20mA/0–10V analog)</div>
+    <div class="step-item"><span class="step-n">2</span>Signal enters Input Module terminal block via field wiring</div>
+    <div class="step-item"><span class="step-n">3">Module performs: electrical isolation (optocoupler), noise filtering (RC filter)</span></div>
+    <div class="step-item"><span class="step-n">4</span>Digital module: signal becomes 0 or 1 &nbsp;|&nbsp; Analog module: A/D converter creates 12–16 bit number</div>
+    <div class="step-item"><span class="step-n">5</span>PLC CPU reads the processed data during the "Read Inputs" phase of the scan cycle</div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Digital vs Analog Input Modules</div>
+  <div class="g2">
+    <div style="background:rgba(0,100,220,0.04);border:1px solid rgba(0,100,220,0.12);border-radius:8px;padding:16px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Digital Input Module (DI)</div>
+      <div class="feat-row"><div class="feat-icon">⚡</div><div>Accepts 24V DC ON/OFF signals from push buttons, limit switches, proximity sensors</div></div>
+      <div class="feat-row"><div class="feat-icon">🔒</div><div>Uses <strong>optocouplers</strong> for complete electrical isolation — field side ↔ logic side separation</div></div>
+      <div class="feat-row"><div class="feat-icon">📊</div><div>Typically 8, 16, or 32 input channels per module</div></div>
+      <div class="feat-row"><div class="feat-icon">💡</div><div>One LED indicator per channel — shows active/inactive status at a glance</div></div>
+      <div class="feat-row"><div class="feat-icon">🛡️</div><div>Protection: overvoltage, reverse polarity (on most models)</div></div>
+    </div>
+    <div style="background:rgba(255,122,0,0.05);border:1px solid rgba(255,122,0,0.15);border-radius:8px;padding:16px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Analog Input Module (AI)</div>
+      <div class="feat-row"><div class="feat-icon">〰️</div><div>Accepts 0–10V DC or 4–20mA continuous variable signals</div></div>
+      <div class="feat-row"><div class="feat-icon">🔢</div><div><strong>A/D Converter:</strong> 12-bit = 0 to 4,095 counts &nbsp;|&nbsp; 16-bit = 0 to 65,535 counts</div></div>
+      <div class="feat-row"><div class="feat-icon">📏</div><div>Higher resolution = more precise measurement (16-bit ~0.0015% accuracy)</div></div>
+      <div class="feat-row"><div class="feat-icon">📡</div><div>Typically 2, 4, or 8 channels per module</div></div>
+      <div class="feat-row"><div class="feat-icon">🔌</div><div>Configurable per channel: 0–10V or 4–20mA via jumper or software</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">LED Indicators — Fast Field Diagnostics</div>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,100,220,0.04);">
+      <div style="width:11px;height:11px;border-radius:50%;background:#2ee88a;box-shadow:0 0 6px #2ee88a;"></div>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;"><strong style="color:var(--bright);">PWR</strong> — Module power ON</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,100,220,0.04);">
+      <div style="width:11px;height:11px;border-radius:50%;background:#2ee88a;box-shadow:0 0 6px #2ee88a;"></div>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;"><strong style="color:var(--bright);">RUN</strong> — Module operating normally</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,100,220,0.04);">
+      <div style="width:11px;height:11px;border-radius:50%;background:#ff3a5c;box-shadow:0 0 6px #ff3a5c;"></div>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;"><strong style="color:var(--bright);">ERR</strong> — Fault / module error</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,100,220,0.04);">
+      <div style="width:11px;height:11px;border-radius:50%;background:#ff7a00;box-shadow:0 0 6px #ff7a00;"></div>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;"><strong style="color:var(--bright);">IN 0–15</strong> — Input channel active (signal present)</span>
+    </div>
+  </div>
+  <div class="key-points">
+    <div class="kp-head">Field Tip</div>
+    <div class="kp-item">If a sensor LED is ON but the PLC program shows no input — check the PLC address mapping in the configuration software.</div>
+    <div class="kp-item">If the LED is OFF but the sensor is triggered — check sensor wiring, power supply voltage, and sensor teach/sensitivity setting.</div>
+    <div class="kp-item">ERR LED ON — check module configuration, baud rate (for remote I/O), or replace module if persistent.</div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'What is the primary purpose of an optocoupler in a PLC digital input module?',
+        opts:['Convert analog signals to digital','Amplify the sensor signal to 230V','Provide electrical isolation between field wiring and the PLC CPU','Filter out high-frequency noise'],
+        ans:2, exp:'An optocoupler uses a LED and photodiode separated by an air gap to transmit signals with no electrical connection. This protects the PLC CPU from field-side voltage spikes, transients, and ESD that could destroy the processor.' },
+      { q:'A 16-bit analog input module can represent values from 0 to:',
+        opts:['255','4,095','65,535','1,024'],
+        ans:2, exp:'16-bit resolution = 2¹⁶ = 65,536 discrete levels (0 to 65,535). This enables very fine measurement resolution — approximately 0.0015% full-scale — compared to 12-bit (4,096 levels, ~0.024%).' },
+      { q:'During PLC commissioning, you notice a proximity sensor LED is OFF even though a metal object is directly in front of it. What is the FIRST thing to check?',
+        opts:['Replace the PLC input module','Check the sensor supply voltage (24V DC) and wiring connections','Re-program the PLC','Swap the sensor for a different brand'],
+        ans:1, exp:'The most common cause of a sensor not triggering is a missing or incorrect power supply. Always check 24V DC supply voltage and wiring (polarity, loose terminals) before replacing components. This saves time and cost.' },
+    ]
+  },
+
+  // ── TIER 2: PLC ──────────────────────────────────────────────────────
+  {
+    id:4, tier:2, icon:'🧠', title:'PLC Architecture & Programming', time:'22 min',
+    desc:'How the PLC is built internally, memory types, and an introduction to Ladder Logic programming.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Inside the PLC</div>
+  <div class="ls-body">A PLC is an <strong>industrial-hardened computer</strong> designed for 24/7 operation in harsh environments (vibration, temperature extremes, EMI, humidity). Unlike a PC, it prioritises reliability, real-time execution, and deterministic scan cycle timing.</div>
+  <div class="g3" style="margin-top:12px;">
+    <div class="ic"><div class="ic-icon">🔲</div><div class="ic-title">CPU Module</div><div class="ic-text">The processor. Runs the scan cycle, executes the user program, manages I/O communications. Speed: 0.02–2µs per instruction.</div></div>
+    <div class="ic"><div class="ic-icon">⚡</div><div class="ic-title">Power Supply</div><div class="ic-text">24V DC or 110/230V AC input, provides regulated 24V/5V DC to CPU and I/O modules. Battery-backed RAM retention.</div></div>
+    <div class="ic"><div class="ic-icon">💾</div><div class="ic-title">Memory</div><div class="ic-text"><strong>Program Memory:</strong> Stores the ladder logic / function blocks.<br><strong>Data Memory:</strong> Stores current values of variables, setpoints, counters, timers.</div></div>
+  </div>
+  <div class="g3" style="margin-top:10px;">
+    <div class="ic"><div class="ic-icon">📥</div><div class="ic-title">Input Image Register</div><div class="ic-text">A memory table snapshot of all input channel states. Updated once per scan at the start of the "Read Inputs" phase.</div></div>
+    <div class="ic"><div class="ic-icon">📤</div><div class="ic-title">Output Image Register</div><div class="ic-text">A memory table of all output commands computed by the program. Written to physical outputs at the end of each scan.</div></div>
+    <div class="ic"><div class="ic-icon">🌐</div><div class="ic-title">Communication Ports</div><div class="ic-text">RS-232, RS-485, Ethernet (Modbus TCP, EtherNet/IP, PROFINET). Connects to HMI, drives, SCADA.</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Ladder Logic — Reading Your First Rung</div>
+  <div class="ls-body" style="margin-bottom:12px;">Ladder Logic is the most common PLC programming language (IEC 61131-3). It looks like an electrical relay diagram — two vertical <strong>power rails</strong> with horizontal <strong>rungs</strong> connecting them.</div>
+  <div class="code-block">
+<span class="cmt">── Rung 001: Start Motor ──────────────────────────────</span>
+|  [START_BTN]    [STOP_BTN]    [OVERLOAD]                 |
+|────┤ ├──────────┤ /├──────────┤ /├──────── ( MOTOR ) ───|
+|    I0.0         I0.1          I0.2           Q0.0         |
+|                                                           |
+<span class="cmt">── Rung 002: Motor Self-Latch ──────────────────────────</span>
+|  [MOTOR]                                                  |
+|────┤ ├──────────────────────────────────────────────── ┐ |
+|    Q0.0   (parallel with START_BTN — holds circuit)      |
+|                                                           |
+<span class="cmt">  ┤ ├  = Normally Open contact   (closed when bit = 1)  </span>
+<span class="cmt">  ┤/├  = Normally Closed contact (closed when bit = 0)  </span>
+<span class="cmt">  ( )  = Output Coil            (energises when rung=1)  </span>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">PLC Programming Languages (IEC 61131-3)</div>
+  <div class="g2">
+    <div class="step-list">
+      <div class="step-item"><span class="step-n ora">LD</span><div><strong>Ladder Diagram</strong> — Visual relay-logic style. Most common. Best for discrete I/O control, interlocks, sequencing.</div></div>
+      <div class="step-item"><span class="step-n ora">FBD</span><div><strong>Function Block Diagram</strong> — Graphical blocks connected by lines. Great for PID loops, math, analog processing.</div></div>
+      <div class="step-item"><span class="step-n ora">ST</span><div><strong>Structured Text</strong> — High-level text language (like Pascal/C). Powerful for complex algorithms and calculations.</div></div>
+    </div>
+    <div class="step-list">
+      <div class="step-item"><span class="step-n ora">IL</span><div><strong>Instruction List</strong> — Assembly-like, low-level. Fast execution, used in memory-constrained PLCs. Less common now.</div></div>
+      <div class="step-item"><span class="step-n ora">SFC</span><div><strong>Sequential Function Chart</strong> — Flowchart-style for multi-step sequential processes (fill → heat → mix → drain).</div></div>
+      <div class="step-item"><span class="step-n ora">CFC</span><div><strong>Continuous Function Chart</strong> — Like FBD but unstructured, allows free placement of blocks on a canvas.</div></div>
+    </div>
+  </div>
+  <div class="key-points">
+    <div class="kp-head">Common PLC Brands & Their Software</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">Siemens S7</span> — TIA Portal (Step 7). Most widely used in Europe & India.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">Delta DVP / AS</span> — WPLSoft / ISPSoft. Popular in Asia-Pacific packaging & automation. Available at TechEdge Market.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">Mitsubishi Q/FX</span> — GX Works 2/3. Widely used in Japan & automotive.</div>
+    <div class="kp-item"><span class="mono" style="color:#ffd500;">Allen-Bradley (Rockwell)</span> — Studio 5000. Dominant in North America.</div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'What is stored in the PLC Output Image Register?',
+        opts:['Sensor values read from the field','The user program (ladder logic)','Output states computed by the program, ready to be written to physical outputs','Recipe and setpoint data'],
+        ans:2, exp:'The Output Image Register is a block of memory that holds the computed state for each output coil/channel. At the end of each scan cycle, these values are written to the physical output modules to drive field devices.' },
+      { q:'In Ladder Logic, a Normally Closed (NC) contact ┤/├ passes power when:',
+        opts:['The associated bit is 1 (ON)','The associated bit is 0 (OFF)','The rung is energised','The output coil is powered'],
+        ans:1, exp:'A Normally Closed contact is CLOSED (passes current) when its associated memory bit = 0 (OFF). It OPENS (blocks current) when the bit = 1. This is used for Stop buttons, overload contacts, and interlock conditions.' },
+      { q:'Which IEC 61131-3 language uses a flowchart-style representation ideal for multi-step sequential processes?',
+        opts:['Ladder Diagram (LD)','Structured Text (ST)','Sequential Function Chart (SFC)','Instruction List (IL)'],
+        ans:2, exp:'Sequential Function Chart (SFC) uses steps and transitions in a flowchart style — ideal for processes that have defined sequences: Step 1 → condition met → Step 2 → condition met → Step 3, etc. Common in batch processes, filling, and washing machines.' },
+    ]
+  },
+
+  // ── TIER 3: Outputs ────────────────────────────────────────────────
+  {
+    id:5, tier:3, icon:'📤', title:'Output Modules & Output Devices', time:'16 min',
+    desc:'How output modules drive field devices — relay types, transistor outputs, analog outputs, and common actuators.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Output Module Types</div>
+  <div class="g3">
+    <div class="ic"><div class="ic-icon">🔵</div><div class="ic-title">Relay Output</div><div class="ic-text">Electromechanical relay switches. Can switch AC or DC loads up to 240V AC / 30V DC. Slower switching (10ms), limited life (~100K operations). Used for high-power, infrequent switching.</div><div class="ic-badge b">AC/DC any voltage</div></div>
+    <div class="ic"><div class="ic-icon">🔶</div><div class="ic-title">Transistor Output</div><div class="ic-text">Solid-state NPN or PNP transistor switch. DC loads only (typically 24V DC, 0.5A per channel). Very fast (< 1ms), unlimited life. Used for high-speed outputs, servo enable, VFD digital signals.</div><div class="ic-badge o">24V DC only</div></div>
+    <div class="ic"><div class="ic-icon">〰️</div><div class="ic-title">Analog Output</div><div class="ic-text">D/A converter outputs 0–10V or 4–20mA. Used to set VFD speed reference, control valve position, set heater power. Resolution: 12 or 16-bit.</div><div class="ic-badge b">0–10V / 4–20mA</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Common Output Devices (Actuators)</div>
+  <div class="g4">
+    <div class="ic ora"><div class="ic-icon">🔵</div><div class="ic-title">Electric Motor</div><div class="ic-text">3-phase induction motor. Driven via contactor (fixed speed) or VFD (variable speed).</div></div>
+    <div class="ic ora"><div class="ic-icon">💧</div><div class="ic-title">Solenoid Valve</div><div class="ic-text">Electrically operated hydraulic or pneumatic valve. ON/OFF or proportional control.</div></div>
+    <div class="ic ora"><div class="ic-icon">🔧</div><div class="ic-title">Pneumatic Cylinder</div><div class="ic-text">Linear actuator driven by compressed air via solenoid valve. Extend/retract operations.</div></div>
+    <div class="ic ora"><div class="ic-icon">🚨</div><div class="ic-title">Tower Light</div><div class="ic-text">Multi-colour stack light. Red=Fault, Amber=Warning, Green=Running. Visual machine status.</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Relay vs Transistor — When to Choose</div>
+  <table class="ctbl">
+    <thead><tr><th style="color:var(--text);">Criteria</th><th style="color:var(--cyan);">Relay Output</th><th style="color:var(--orange);">Transistor Output</th></tr></thead>
+    <tbody>
+      <tr><td>Load Voltage</td><td>AC or DC (any voltage)</td><td>DC only (max 30V)</td></tr>
+      <tr><td>Switching Speed</td><td>~10ms (slow)</td><td>&lt; 1ms (very fast)</td></tr>
+      <tr><td>Mechanical Life</td><td>Limited (~100K cycles)</td><td>Unlimited (solid state)</td></tr>
+      <tr><td>Best For</td><td>Mains loads, motors, lamps, heating elements</td><td>24V DC devices, high-speed pulse, servo/encoder signals</td></tr>
+      <tr><td>Cost</td><td>Slightly higher (mechanical)</td><td>Lower (integrated silicon)</td></tr>
+    </tbody>
+  </table>
+</div>`,
+    quiz:[
+      { q:'You need to control a 230V AC conveyor motor contactor coil directly from a PLC output. Which output type should you use?',
+        opts:['Transistor (NPN) output','Relay output','Analog output','SSR (Solid State Relay) only'],
+        ans:1, exp:'A relay output can switch both AC and DC loads at various voltages, including 230V AC. Transistor outputs are DC only (typically max 30V DC), so they cannot directly switch 230V AC loads.' },
+      { q:'A VFD speed reference input requires a 0–10V analog signal from the PLC. Which PLC output module provides this?',
+        opts:['Digital (Relay) Output Module','Digital (Transistor) Output Module','Analog Output Module','Counter Output Module'],
+        ans:2, exp:'The Analog Output Module converts a digital value from the PLC into a continuous voltage (0–10V) or current (4–20mA) signal. This is used as the speed reference (setpoint) for a VFD.' },
+      { q:'What does a RED indicator on a tower light stack typically indicate?',
+        opts:['Machine is running normally','Warning — attention needed','Fault / Alarm — machine stopped','Machine is in setup mode'],
+        ans:2, exp:'Standard tower light colour code: Green = Running normally, Amber/Yellow = Warning (attention needed but not stopped), Red = Fault/Alarm (machine has stopped), Blue = Maintenance mode.' },
+    ]
+  },
+
+  // ── TIER 4: Motor Control ─────────────────────────────────────────
+  {
+    id:6, tier:4, icon:'⚡', title:'Motor Control — Contactors, VFDs & Servos', time:'20 min',
+    desc:'Master the three types of motor control used in industrial automation: contactors for ON/OFF, VFDs for speed, and servos for precision.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">The Three Motor Control Tiers</div>
+  <div class="g3">
+    <div class="ic"><div class="ic-icon">🔵</div><div class="ic-title">Contactor (DOL)</div><div class="ic-text">Direct Online starter. Magnetic switch that connects motor directly to mains supply. Motor runs at full speed only. Simple, robust, cheap. Used for pumps, fans, fixed conveyors.</div><div class="ic-badge b">ON / OFF only</div></div>
+    <div class="ic"><div class="ic-icon">〰️</div><div class="ic-title">VFD (Inverter Drive)</div><div class="ic-text">Variable Frequency Drive. Converts AC→DC→Variable AC. Controls motor speed by varying output frequency (0–400Hz). Soft start, energy saving, process control.</div><div class="ic-badge o">0–100% Speed</div></div>
+    <div class="ic grn"><div class="ic-icon">🎯</div><div class="ic-title">Servo Drive</div><div class="ic-text">Closed-loop position/torque control. Motor has encoder feedback. Achieves ±0.001° positioning accuracy. Used in CNC, robotics, label applicators, index tables.</div><div class="ic-badge" style="background:rgba(46,232,138,0.12);color:var(--green);border:1px solid rgba(46,232,138,0.25);">Position Control</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">VFD Deep Dive — How It Works</div>
+  <div class="step-list">
+    <div class="step-item ora"><span class="step-n ora">1</span><strong>Rectifier:</strong> Converts incoming 3-phase AC (415V, 50Hz) to DC using a diode bridge. DC Bus voltage ≈ 565V DC.</div>
+    <div class="step-item ora"><span class="step-n ora">2</span><strong>DC Bus:</strong> Large electrolytic capacitors smooth the DC and provide energy storage for deceleration.</div>
+    <div class="step-item ora"><span class="step-n ora">3</span><strong>Inverter (IGBT):</strong> 6 high-speed transistors (IGBTs) switch at 2–16kHz carrier frequency, creating PWM waveform.</div>
+    <div class="step-item ora"><span class="step-n ora">4</span><strong>Output:</strong> PWM waveform approximates a variable-frequency sine wave — motor speed follows frequency directly.</div>
+  </div>
+  <div class="key-points" style="margin-top:12px;">
+    <div class="kp-head">Critical VFD Parameters</div>
+    <div class="kp-item"><strong>P01 (Max Frequency)</strong> — Maximum output frequency (typically 50Hz or 60Hz for standard motors)</div>
+    <div class="kp-item"><strong>P02 (Motor Rated Current)</strong> — Set to motor nameplate current for overload protection</div>
+    <div class="kp-item"><strong>P03 (Accel Time)</strong> — Time (seconds) to ramp from 0Hz to max frequency</div>
+    <div class="kp-item"><strong>P04 (Decel Time)</strong> — Time to ramp from max frequency to 0Hz (too fast = DC bus overvoltage fault)</div>
+    <div class="kp-item"><strong>P10 (Control Mode)</strong> — Digital terminal control (0) / Analog 0–10V (1) / Modbus (3)</div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">VFD Energy Savings — The Affinity Laws</div>
+  <div class="g2">
+    <div class="ls-body">
+      <strong>Affinity Laws for centrifugal loads (pumps, fans):</strong><br><br>
+      • Speed ↓ 20% → Flow ↓ 20%<br>
+      • Speed ↓ 20% → Power ↓ <strong>49%</strong> (Power ∝ Speed³)<br><br>
+      Running a pump at 80% speed instead of 100% saves <strong>~49% of energy</strong>. This is why VFDs pay back their cost in 1–2 years in pump and fan applications.
+    </div>
+    <div class="wave-area">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(46,232,138,0.6);margin-bottom:8px;">POWER vs SPEED (Centrifugal Load):</div>
+      <svg width="100%" height="90" viewBox="0 0 260 90">
+        <line x1="30" y1="80" x2="30" y2="8" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <line x1="30" y1="80" x2="255" y2="80" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+        <path d="M30,80 C80,78 140,60 250,10" fill="none" stroke="#00a84f" stroke-width="2.5"/>
+        <text x="32" y="88" fill="rgba(0,60,120,0.4)" font-size="8" font-family="monospace">0%</text>
+        <text x="240" y="88" fill="rgba(0,60,120,0.4)" font-size="8" font-family="monospace">100%</text>
+        <text x="2" y="82" fill="rgba(0,60,120,0.4)" font-size="8" font-family="monospace">0</text>
+        <text x="2" y="12" fill="rgba(0,60,120,0.4)" font-size="8" font-family="monospace">P</text>
+        <text x="130" y="40" fill="rgba(0,148,60,0.8)" font-size="9" font-family="monospace">P ∝ n³</text>
+        <circle cx="188" cy="40" r="3" fill="#e06000"/>
+        <text x="193" y="38" fill="#e06000" font-size="8" font-family="monospace">80% speed</text>
+        <text x="193" y="48" fill="#e06000" font-size="8" font-family="monospace">→ 51% power</text>
+      </svg>
+    </div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'A conveyor needs to run at variable speeds between 0.5 m/s and 2.5 m/s. Which motor control solution should you specify?',
+        opts:['Direct Online (DOL) contactor starter','Variable Frequency Drive (VFD)','Star-Delta starter','Servo drive with encoder'],
+        ans:1, exp:'A VFD is the correct choice for variable speed control. A DOL starter only provides full speed ON/OFF. Star-delta reduces starting current but still runs at full speed. A servo would work but is expensive and unnecessary for a simple conveyor.' },
+      { q:'In a VFD, the "IGBT" stage (inverter) is responsible for:',
+        opts:['Converting AC input to DC bus voltage','Filtering DC bus ripple with capacitors','Generating variable frequency PWM output to control motor speed','Protecting the motor from overload current'],
+        ans:2, exp:'The Inverter stage uses 6 IGBTs (Insulated Gate Bipolar Transistors) switching at carrier frequency (2–16kHz) to create a Pulse Width Modulated (PWM) waveform. The motor averages this PWM as a variable frequency sine wave, controlling its speed.' },
+      { q:'If a pump motor is run at 70% of its rated speed using a VFD, approximately what percentage of its original power will it consume?',
+        opts:['70%','49%','34%','80%'],
+        ans:2, exp:'By the Affinity Laws, Power ∝ Speed³. So 0.70³ = 0.343 ≈ 34% of original power. Running a centrifugal pump at 70% speed saves approximately 66% of the energy — an enormous saving that drives VFD ROI in pump applications.' },
+    ]
+  },
+
+  // ── TIER 5: Networks ────────────────────────────────────────────────
+  {
+    id:7, tier:5, icon:'🌐', title:'Industrial Networks & Protocols', time:'18 min',
+    desc:'Understand how PLCs communicate with drives, HMIs, and other devices using Modbus, EtherNet/IP, and PROFINET.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Why Industrial Networks?</div>
+  <div class="ls-body">Instead of running individual wires for every signal, <strong>industrial networks</strong> allow one cable to carry thousands of data points. A single Ethernet cable from PLC to VFD can transmit speed reference, current feedback, fault codes, temperature — all simultaneously using a communication protocol.</div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">The Three Major Protocols</div>
+  <div class="g3">
+    <div class="ic"><div class="ic-icon">📡</div><div class="ic-title">Modbus TCP/IP</div><div class="ic-text">The oldest and most universal protocol (1979, Modicon). Master/Slave architecture. PLC (master) polls devices (slaves) for data. Works over RS-485 (RTU) or Ethernet (TCP/IP). Supported by virtually every industrial device.</div><div class="ic-badge b">Universal</div></div>
+    <div class="ic"><div class="ic-icon">🔵</div><div class="ic-title">EtherNet/IP</div><div class="ic-text">Developed by Rockwell (Allen-Bradley). Uses standard Ethernet with CIP (Common Industrial Protocol) on top. Producer/Consumer model — devices broadcast data at set intervals without being polled. Excellent for high-speed I/O.</div><div class="ic-badge o">Rockwell / Allen-Bradley</div></div>
+    <div class="ic"><div class="ic-icon">⚫</div><div class="ic-title">PROFINET</div><div class="ic-text">Siemens standard. Real-time Ethernet with three performance classes: RT (real-time, 1ms), IRT (isochronous, ≤1µs for motion control). Deterministic timing makes it ideal for servo coordination and robot control.</div><div class="ic-badge" style="background:rgba(255,58,92,0.12);color:#c05000;border:1px solid rgba(255,122,0,0.25);">Siemens</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Modbus RTU Register Map</div>
+  <div class="ls-body" style="margin-bottom:10px;">Modbus uses a simple numbered register system. Every device has a published register map in its manual:</div>
+  <table class="ctbl">
+    <thead><tr><th style="color:var(--text);">Register Type</th><th style="color:var(--cyan);">Function Code</th><th>Address Range</th><th>Access</th></tr></thead>
+    <tbody>
+      <tr><td>Discrete Input (DI)</td><td class="mono c">FC 02</td><td class="mono">10001–19999</td><td>Read Only</td></tr>
+      <tr><td>Coil (DO)</td><td class="mono c">FC 01 / 05</td><td class="mono">00001–09999</td><td>Read / Write</td></tr>
+      <tr><td>Input Register (AI)</td><td class="mono c">FC 04</td><td class="mono">30001–39999</td><td>Read Only</td></tr>
+      <tr><td>Holding Register (AO)</td><td class="mono c">FC 03 / 06</td><td class="mono">40001–49999</td><td>Read / Write</td></tr>
+    </tbody>
+  </table>
+  <div class="code-block" style="margin-top:10px;">
+<span class="cmt">── Example: Read VFD output frequency via Modbus TCP ──</span>
+<span class="kw">Host (PLC):</span> <span class="val">READ FC04, Slave ID=1, Register 40009</span>
+<span class="kw">VFD Response:</span> <span class="val">0x0BB8 = 3000 (= 30.00 Hz)</span>
+
+<span class="cmt">── Write speed reference ──</span>
+<span class="kw">Host (PLC):</span> <span class="val">WRITE FC06, Slave ID=1, Register 40006, Value=2500 (25.00Hz)</span>
+  </div>
+</div>`,
+    quiz:[
+      { q:'Which industrial protocol uses a Master/Slave architecture where the PLC polls each device for data?',
+        opts:['EtherNet/IP','PROFINET IRT','Modbus RTU / TCP','OPC-UA'],
+        ans:2, exp:'Modbus uses a strict Master/Slave model. The PLC (Master) initiates all communication — it sends a request to a Slave device (VFD, sensor, HMI) which responds. No device can transmit without being asked by the Master.' },
+      { q:'PROFINET IRT (Isochronous Real-Time) achieves what maximum cycle time?',
+        opts:['100ms','10ms','1ms','≤ 1µs (sub-millisecond)'],
+        ans:3, exp:'PROFINET IRT achieves cycle times of less than 1 microsecond (< 1µs), enabling precise synchronisation of multiple servo axes for motion control. This is required for CNC machining, robot coordination, and high-speed printing.' },
+      { q:'In Modbus, Function Code 06 (FC06) is used to:',
+        opts:['Read a single coil','Read multiple input registers','Write a single holding register','Write multiple coils'],
+        ans:2, exp:'Modbus FC06 = Write Single Holding Register. This is used to send a value to a device — for example, writing a speed setpoint (3000 = 30.00Hz) to a VFD holding register. FC03 reads holding registers, FC04 reads input registers.' },
+    ]
+  },
+
+  // ── TIER 5: HMI ────────────────────────────────────────────────────
+  {
+    id:8, tier:5, icon:'🖥️', title:'HMI, SCADA & Visualisation', time:'16 min',
+    desc:'How operators interact with machines via HMI panels and how SCADA systems provide site-wide monitoring and control.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Machine HMI — The Operator Interface</div>
+  <div class="g2">
+    <div>
+      <div class="ls-body" style="margin-bottom:10px;">An HMI (Human-Machine Interface) is the <strong>touchscreen panel</strong> mounted at or near the machine. Operators use it to monitor status, adjust setpoints, acknowledge alarms, and view trends — without needing to open the control panel.</div>
+      <div class="step-list">
+        <div class="step-item"><span class="step-n">1</span><strong>Status Monitoring:</strong> Real-time display of temperatures, speeds, pressures, counters, timers</div>
+        <div class="step-item"><span class="step-n">2</span><strong>Setpoint Entry:</strong> Operator adjusts temperature setpoints, speed references, recipe parameters</div>
+        <div class="step-item"><span class="step-n">3</span><strong>Alarm Management:</strong> Alarm list with descriptions, timestamps, acknowledgement</div>
+        <div class="step-item"><span class="step-n">4</span><strong>Trend Display:</strong> Historical graph of process variables over time</div>
+      </div>
+    </div>
+    <div class="ic">
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--cyan);margin-bottom:10px;text-align:left;">TYPICAL HMI SCREEN ELEMENTS</div>
+      <div style="background:rgba(0,100,220,0.04);border-radius:8px;padding:12px;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:2.2;text-align:left;">
+        <div style="color:#007838;">● CONVEYOR: RUNNING  50Hz</div>
+        <div style="color:#0060c0;">● TEMP ZONE1: 185°C  [SET: 190°C]</div>
+        <div style="color:#0060c0;">● TEMP ZONE2: 188°C  [SET: 190°C]</div>
+        <div style="color:#c05000;">⚠ ALARM: OVERHEAT Z1 14:22:05</div>
+        <div style="color:#8aabcc;">PROD COUNT: 1,247 pcs/hr</div>
+        <div style="margin-top:6px;display:flex;gap:8px;">
+          <div style="background:rgba(46,232,138,0.15);color:#007838;padding:2px 10px;border-radius:3px;">▶ START</div>
+          <div style="background:rgba(255,58,92,0.15);color:#ff3a5c;padding:2px 10px;border-radius:3px;">■ STOP</div>
+          <div style="background:rgba(255,122,0,0.15);color:#c05000;padding:2px 10px;border-radius:3px;">⚙ SETUP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Machine HMI vs SCADA — Key Differences</div>
+  <table class="ctbl">
+    <thead><tr><th style="color:var(--text);">Feature</th><th style="color:var(--cyan);">Machine HMI</th><th style="color:var(--orange);">SCADA System</th></tr></thead>
+    <tbody>
+      <tr><td>Location</td><td>At the machine (local)</td><td>Control room, server, or cloud</td></tr>
+      <tr><td>Scope</td><td>One machine or area</td><td>Entire plant / multiple sites</td></tr>
+      <tr><td>Users</td><td>Machine operator</td><td>Plant manager, engineers, supervisors</td></tr>
+      <tr><td>Data Storage</td><td>Limited (hours/days)</td><td>Historian: months to years of data</td></tr>
+      <tr><td>Connectivity</td><td>Direct to local PLC</td><td>Connects to all PLCs/RTUs via network</td></tr>
+      <tr><td>Examples</td><td>Delta DOP-B series, Siemens KTP</td><td>Ignition, WinCC, InTouch, FactoryTalk</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">OPC-UA — The Modern Data Backbone</div>
+  <div class="ls-body">
+    <strong>OPC-UA (Unified Architecture)</strong> is the modern standard for data exchange between industrial devices, PLCs, SCADA, MES (Manufacturing Execution Systems), and cloud platforms (AWS IoT, Azure IoT Hub).<br><br>
+    Key advantages: <strong>Platform-independent</strong> (Windows, Linux, embedded), <strong>secure</strong> (encrypted, authenticated), <strong>semantic data modelling</strong> (data has meaning, not just numbers). Central to Industry 4.0 and IIoT implementations.
+  </div>
+  <div class="flow-chain" style="margin-top:12px;">
+    <div class="fc-node" style="background:rgba(0,100,220,0.08);color:#0060c0;">PLC / RTU</div>
+    <div class="fc-arr">→ OPC-UA →</div>
+    <div class="fc-node" style="background:rgba(0,100,220,0.08);color:#0060c0;">SCADA / Historian</div>
+    <div class="fc-arr">→ OPC-UA →</div>
+    <div class="fc-node" style="background:rgba(176,96,255,0.1);color:#b060ff;">MES / ERP</div>
+    <div class="fc-arr">→ OPC-UA →</div>
+    <div class="fc-node" style="background:rgba(255,213,0,0.1);color:#ffd500;">Cloud / AI Platform</div>
+  </div>
+</div>`,
+    quiz:[
+      { q:'What is the key operational difference between a Machine HMI and a SCADA system?',
+        opts:['HMI uses Ethernet, SCADA uses serial Modbus','HMI is for one machine operator locally; SCADA aggregates data from all machines for supervisors site-wide','HMI displays only alarms; SCADA controls the process','SCADA is mounted at the machine; HMI is in the control room'],
+        ans:1, exp:'A Machine HMI provides local, single-machine operator interface (start/stop, setpoints, alarms for that machine). SCADA is a site-level supervisory system connecting to all PLCs across the plant, storing historical data, and providing dashboards for management.' },
+      { q:'OPC-UA is important in modern industrial automation because:',
+        opts:['It replaces 4–20mA analog signals with digital','It provides a secure, platform-independent, standards-based data exchange between PLCs, SCADA, and cloud systems','It is a free replacement for Modbus TCP','It controls VFD speed directly without a PLC'],
+        ans:1, exp:'OPC-UA (OPC Unified Architecture) provides a standardised, secure, and platform-independent communication framework that enables seamless data exchange between field devices, PLCs, SCADA systems, ERP/MES, and cloud platforms — the backbone of Industry 4.0.' },
+    ]
+  },
+
+  // ── TIER 6: Hero ────────────────────────────────────────────────────
+  {
+    id:9, tier:6, icon:'🏆', title:'System Integration & Troubleshooting', time:'25 min',
+    desc:'Bring everything together — design a complete automation system and master systematic fault-finding techniques.',
+    content:`
+<div class="lesson-section">
+  <div class="ls-head">Complete System Design Methodology</div>
+  <div class="step-list">
+    <div class="step-item"><span class="step-n">01</span><div><strong>Define the Process:</strong> What needs to be controlled? What inputs exist? What outputs must act? Write the functional specification.</div></div>
+    <div class="step-item"><span class="step-n">02</span><div><strong>I/O Count:</strong> List every sensor (input) and every actuator (output). Count digital and analog separately. Add 20% spare capacity.</div></div>
+    <div class="step-item"><span class="step-n">03</span><div><strong>Select Hardware:</strong> PLC model (CPU + I/O modules), VFDs, servo drives, HMI, network switches, power supplies.</div></div>
+    <div class="step-item"><span class="step-n">04</span><div><strong>Panel Design:</strong> Control panel layout — DIN rail arrangement, cable routing, terminal block numbering, earthing/grounding.</div></div>
+    <div class="step-item"><span class="step-n">05</span><div><strong>Program Development:</strong> Write PLC code (ladder logic), configure HMI screens, set VFD parameters, configure network.</div></div>
+    <div class="step-item"><span class="step-n">06</span><div><strong>Factory Acceptance Test (FAT):</strong> Simulate field conditions in the workshop before shipping to site.</div></div>
+    <div class="step-item"><span class="step-n">07</span><div><strong>Site Commissioning:</strong> Wire up, power on, test each I/O point, run machine in manual mode then auto mode.</div></div>
+    <div class="step-item"><span class="step-n">08</span><div><strong>Handover & Documentation:</strong> As-built drawings, PLC program backup, HMI backup, test records, operator training.</div></div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head ora">Systematic Fault-Finding — The 5-Layer Approach</div>
+  <div class="ls-body" style="margin-bottom:12px;">When a machine faults, work through the 5 layers systematically. Never guess — use the diagnostic tools available.</div>
+  <div class="g2">
+    <div class="step-list">
+      <div class="step-item ora"><span class="step-n ora">L1</span><div><strong>Check Sensors first:</strong> Is the LED lit? Is supply voltage correct? Is the sensor mechanically aligned? Clean the lens if photoelectric.</div></div>
+      <div class="step-item ora"><span class="step-n ora">L2</span><div><strong>Check Input Module:</strong> Is channel LED ON in the module? Does PLC software show the input? Check terminal block connections.</div></div>
+      <div class="step-item ora"><span class="step-n ora">L3</span><div><strong>Check PLC Logic:</strong> Monitor live in PLC software. Is the rung energised? Are timers/counters at expected values? Check for program bugs.</div></div>
+    </div>
+    <div class="step-list">
+      <div class="step-item ora"><span class="step-n ora">L4</span><div><strong>Check Output Module:</strong> Is output channel LED ON? Measure voltage at terminal with multimeter. Check fuses.</div></div>
+      <div class="step-item ora"><span class="step-n ora">L5</span><div><strong>Check Output Device:</strong> Is contactor pulling in? Does VFD show fault code? Check motor connections, thermal overload. Read fault code in VFD menu.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head grn">Common VFD Fault Codes & Solutions</div>
+  <table class="ctbl">
+    <thead><tr><th style="color:var(--text);">Fault Code</th><th style="color:var(--orange);">Cause</th><th style="color:var(--green);">Solution</th></tr></thead>
+    <tbody>
+      <tr><td class="mono c">OC (Overcurrent)</td><td>Motor overloaded, decel too fast, short circuit</td><td>Check load, increase decel time, check motor winding insulation</td></tr>
+      <tr><td class="mono c">OV (Overvoltage)</td><td>DC bus too high — too fast deceleration</td><td>Increase decel time, add braking resistor</td></tr>
+      <tr><td class="mono c">UV (Undervoltage)</td><td>Supply voltage too low or dip</td><td>Check power supply, check incoming voltage</td></tr>
+      <tr><td class="mono c">OL (Overload)</td><td>Motor current exceeded rated for too long</td><td>Reduce load, check motor sizing, set P02 correctly</td></tr>
+      <tr><td class="mono c">GF (Ground Fault)</td><td>Motor or cable insulation to earth</td><td>Megger test motor and cable, replace if &lt; 1MΩ</td></tr>
+      <tr><td class="mono c">PHL (Phase Loss)</td><td>Missing input phase</td><td>Check incoming 3-phase supply at drive terminals</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="lesson-section">
+  <div class="ls-head purp">🏆 You Are Now an Automation Engineer</div>
+  <div class="ls-body">You have completed the <strong>Zero to Hero</strong> journey in Industrial Automation Control Systems. You now understand:<br><br>
+  ✅ The 5-layer IACS architecture<br>
+  ✅ Digital and analog sensors — types, signals, wiring<br>
+  ✅ PLC architecture, scan cycle, ladder logic programming<br>
+  ✅ Output modules and actuators<br>
+  ✅ Motor control — contactors, VFDs, servo drives<br>
+  ✅ Industrial networks — Modbus, EtherNet/IP, PROFINET<br>
+  ✅ HMI, SCADA, and OPC-UA<br>
+  ✅ System design methodology and fault-finding<br><br>
+  <strong>Next steps:</strong> Visit TechEdge Market to explore Delta PLCs, Delta VFDs, and industrial sensors from GIC, SubZero, and Swastik — and apply this knowledge to real projects.
+  </div>
+</div>`,
+    quiz:[
+      { q:'During commissioning, an output device (conveyor motor) does not run even though the PLC output LED is ON. What is the MOST logical next step?',
+        opts:['Rewrite the PLC program','Measure voltage at the output module terminal with a multimeter to confirm the signal reaches the field','Replace the PLC CPU','Check the sensor wiring'],
+        ans:1, exp:'If the PLC output LED is ON, the module is commanded to output. The next step is to verify the signal reaches the field — measure voltage at the output terminal. If voltage is present there but the motor does not run, the fault is in the field wiring or the device itself (contactor, VFD).' },
+      { q:'A VFD shows fault code "OV" (Overvoltage). What is the most likely cause?',
+        opts:['Motor winding is shorted to earth','The supply voltage is too low','The DC bus voltage is too high — most likely the deceleration ramp is too fast','A phase is missing from the input supply'],
+        ans:2, exp:'OV (Overvoltage) fault means the DC bus voltage exceeded the maximum limit. During rapid deceleration, the motor acts as a generator, pumping energy back into the DC bus. The solution is to increase the deceleration time (P04) or add a braking resistor.' },
+      { q:'What is the purpose of a Factory Acceptance Test (FAT) in a control system project?',
+        opts:['To test the system with real production product','To simulate and verify system function in the workshop before shipping to site, reducing expensive site commissioning time','To train the customer operators on the HMI','To calibrate all sensors after installation'],
+        ans:1, exp:'FAT (Factory Acceptance Test) is conducted at the panel builder or integrator workshop. The goal is to verify all functions work correctly before the system is shipped to site, where fixing problems is far more expensive and disruptive to production.' },
+      { q:'Which tool is used to test motor cable insulation resistance in a VFD application?',
+        opts:['Multimeter (DC voltage range)','Clamp-on ammeter','Megohmmeter (Megger)','Oscilloscope'],
+        ans:2, exp:'A Megohmmeter (Megger) applies a high test voltage (typically 500–1000V DC) and measures insulation resistance. For motor cables, insulation resistance should be > 1MΩ (1 Megaohm). Values below this indicate damaged insulation that could cause VFD ground fault trips.' },
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  completedModules: new Set(),
+  currentModule: null,
+  xp: 0,
+  quizIdx: 0,
+  quizScore: 0,
+  quizAnswered: false,
+};
+
+function isUnlocked(mid) {
+  if (mid === 0) return true;
+  return state.completedModules.has(mid - 1);
+}
+
+function isComplete(mid) {
+  return state.completedModules.has(mid);
+}
+
+function getXP() {
+  return state.completedModules.size * 100;
+}
+
+// ═══════════════════════════════════════════════════════
+// VIEW SYSTEM
+// ═══════════════════════════════════════════════════════
+function show(view) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  // Show target view
+  const el = document.getElementById('v-' + view);
+  if (el) el.classList.add('active');
+  // Scroll to top of the shown view
+  if (el) el.scrollTop = 0;
+  // Camera target
+  if (typeof setBgView === 'function') setBgView(view);
+  // Quiz CTA bar: only visible on module lesson view
+  const cta = document.getElementById('quiz-cta');
+  if (cta) {
+    if (view === 'module') {
+      cta.classList.add('show');
+    } else {
+      cta.classList.remove('show');
+    }
+  }
+  // Fire confetti on certificate view
+  if (view === 'cert' && typeof window.launchCertConfetti === 'function') {
+    window.launchCertConfetti();
+  }
+  updateHeader();
+}
+
+function updateHeader() {
+  const total = MODULES.length;
+  const done = state.completedModules.size;
+  document.getElementById('prog-label').textContent = done + ' / ' + total;
+
+  const dotsEl = document.getElementById('prog-dots');
+  dotsEl.innerHTML = MODULES.map((m, i) => {
+    const cls = state.completedModules.has(i) ? 'done' : (i === state.currentModule ? 'active' : '');
+    return `<div class="prog-step ${cls}" onclick="openModule(${i})" title="Module ${i+1}: ${m.title}"></div>`;
+  }).join('');
+
+  const xpPct = Math.min(100, Math.round(getXP() / (MODULES.length * 100) * 100));
+  document.getElementById('xp-fill').style.width = xpPct + '%';
+}
+
+// ═══════════════════════════════════════════════════════
+// COURSE MAP BUILD
+// ═══════════════════════════════════════════════════════
+function buildMap() {
+  const container = document.getElementById('tier-container');
+  container.innerHTML = '';
+
+  TIERS.forEach(tier => {
+    const tierMods = MODULES.filter(m => m.tier === tier.id);
+    if (!tierMods.length) return;
+
+    const tierEl = document.createElement('div');
+    tierEl.className = 'tier';
+    tierEl.innerHTML = `
+      <div class="tier-badge">
+        <div class="tier-dot tc-${tier.id} ${tierMods.every(m => isComplete(m.id)) ? 'done' : 'locked'}" style="border-color:${tier.color};">
+          ${tierMods.every(m => isComplete(m.id)) ? '✓' : tier.id}
+        </div>
+        <div class="tier-label tc-${tier.id}">${tier.label}</div>
+        <div style="font-size:9px;color:#90afc8;text-align:center;font-family:'Share Tech Mono',monospace;">${tier.title}</div>
+      </div>
+      <div class="tier-modules">
+        ${tierMods.map(m => buildModuleCard(m, tier)).join('')}
+      </div>
+    `;
+    container.appendChild(tierEl);
+  });
+}
+
+function buildModuleCard(m, tier) {
+  const locked = !isUnlocked(m.id);
+  const done = isComplete(m.id);
+  return `
+    <div class="mcard ${locked ? 'locked' : ''} ${done ? 'done' : ''}"
+         onclick="${locked ? '' : `openModule(${m.id})`}"
+         style="${done ? `border-color:rgba(46,232,138,0.25)` : !locked ? `border-color:rgba(0,144,255,0.12)` : ''}">
+      <div class="mc-top">
+        <div class="mc-icon">${m.icon}</div>
+        <div class="mc-info">
+          <div class="mc-tier tc-${tier.id}">
+            ${tier.label} · ${tier.title}
+          </div>
+          <div class="mc-title">${m.title}</div>
+        </div>
+      </div>
+      <div class="mc-desc">${m.desc}</div>
+      <div class="mc-footer">
+        <div class="mc-time">⏱ ${m.time}</div>
+        <div class="mc-status">
+          ${done
+            ? `<span class="mc-check">✓</span> <span style="color:var(--green);">COMPLETE</span>`
+            : locked
+            ? `<span class="mc-lock">🔒</span> <span style="color:#a0b8d0;">LOCKED</span>`
+            : `<span style="color:var(--cyan);">→ START</span>`}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// MODULE VIEWER
+// ═══════════════════════════════════════════════════════
+function openModule(id) {
+  if (!isUnlocked(id)) return;
+  const m = MODULES[id];
+  state.currentModule = id;
+  const tier = TIERS[m.tier];
+  const done = isComplete(id);
+
+  document.getElementById('module-content').innerHTML = `
+    <div class="mod-crumb" onclick="show('map')">← TechEdge Market &nbsp;/&nbsp; Course Map &nbsp;/&nbsp; ${m.title}</div>
+      <div class="mod-header">
+        <div class="mod-icon">${m.icon}</div>
+        <div class="mod-meta">
+          <div class="mod-tier-badge tc-${m.tier} bg-tc-${m.tier}">${tier.label} &nbsp;·&nbsp; ${tier.title}</div>
+          <div class="mod-title">${m.title}</div>
+          <div class="mod-desc-text">${m.desc}</div>
+          <div class="mod-pills">
+            <div class="pill">⏱ ${m.time}</div>
+            <div class="pill">${m.quiz.length} Quiz Questions</div>
+            ${done ? '<div class="pill" style="color:var(--green);border-color:rgba(46,232,138,0.25);">✓ Completed</div>' : ''}
+          </div>
+        </div>
+      </div>
+      ${m.content}
+  `;
+
+  document.getElementById('cta-info').textContent = `Module ${id + 1} of ${MODULES.length} · ${m.quiz.length} questions`;
+  updateHeader();
+  show('module');
+  document.getElementById('v-module').scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════════════════════
+function startQuiz() {
+  if (state.currentModule === null) return;
+  state.quizIdx = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+  renderQuestion();
+  show('quiz');
+}
+
+function renderQuestion() {
+  const m = MODULES[state.currentModule];
+  const area = document.getElementById('quiz-area');
+
+  if (state.quizIdx >= m.quiz.length) {
+    renderScore(m);
+    return;
+  }
+
+  const q = m.quiz[state.quizIdx];
+  const pct = Math.round(state.quizIdx / m.quiz.length * 100);
+  const tier = TIERS[m.tier];
+
+  area.innerHTML = `
+    <div style="padding:20px 0 6px;">
+      <div class="q-module-label">${m.icon} ${m.title}</div>
+      <div class="q-progress-bar"><div class="q-progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="qcard">
+      <div class="q-num">QUESTION ${state.quizIdx + 1} OF ${m.quiz.length} &nbsp;·&nbsp; SCORE: ${state.quizScore} / ${state.quizIdx}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">
+        ${q.opts.map((o, i) => `
+          <div class="qopt" id="qo${i}" onclick="pickAnswer(${i})">
+            <span class="q-letter">${'ABCD'[i]}.</span>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="q-feedback" id="q-fb"></div>
+      <div id="q-nav" style="display:none;" class="q-nav">
+        <button class="btn-next-q" onclick="nextQuestion()">
+          ${state.quizIdx < m.quiz.length - 1 ? 'Next Question →' : 'See Results'}
+        </button>
+      </div>
+    </div>
+  `;
+  state.quizAnswered = false;
+}
+
+function pickAnswer(i) {
+  if (state.quizAnswered) return;
+  state.quizAnswered = true;
+
+  const m = MODULES[state.currentModule];
+  const q = m.quiz[state.quizIdx];
+  const fb = document.getElementById('q-fb');
+
+  document.querySelectorAll('.qopt').forEach(el => el.classList.add('locked'));
+
+  if (i === q.ans) {
+    document.getElementById('qo' + i).classList.add('correct');
+    fb.className = 'q-feedback show ok';
+    fb.innerHTML = '✅ Correct! &nbsp; ' + q.exp;
+    state.quizScore++;
+  } else {
+    document.getElementById('qo' + i).classList.add('wrong');
+    document.getElementById('qo' + q.ans).classList.add('correct');
+    fb.className = 'q-feedback show bad';
+    fb.innerHTML = '❌ Incorrect. &nbsp; ' + q.exp;
+  }
+  document.getElementById('q-nav').style.display = 'flex';
+}
+
+function nextQuestion() {
+  state.quizIdx++;
+  renderQuestion();
+}
+
+function renderScore(m) {
+  const s = state.quizScore, t = m.quiz.length;
+  const pct = Math.round(s / t * 100);
+  const pass = pct >= 60;
+  const grade = pct >= 90 ? '🏆 Outstanding!' : pct >= 75 ? '⭐ Well Done!' : pct >= 60 ? '👍 Passed!' : '📚 Keep Practising';
+
+  if (pass && !isComplete(state.currentModule)) {
+    state.completedModules.add(state.currentModule);
+    state.xp = getXP();
+  }
+
+  const allDone = state.completedModules.size === MODULES.length;
+  const deg = Math.round(pct * 3.6);
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="qwrap">
+      <div class="score-screen">
+        <div class="score-ring" style="background:conic-gradient(${pass?'var(--green)':'var(--red)'} ${deg}deg, rgba(255,255,255,0.05) 0deg);">
+          <div class="score-ring-inner">
+            <div class="score-num">${s}/${t}</div>
+            <div class="score-denom">${pct}%</div>
+          </div>
+        </div>
+        <div class="score-grade">${grade}</div>
+        <div class="score-msg">
+          ${pass
+            ? `Module <strong style="color:var(--bright);">${m.title}</strong> marked complete! ${state.currentModule < MODULES.length - 1 ? 'Next module is now unlocked.' : '🎉 Final module complete!'}`
+            : `You need 60% to pass. Review the lesson material and try again.`}
+        </div>
+        <div class="score-btns">
+          <button class="btn-retry" onclick="startQuiz()">Retry Quiz</button>
+          <button class="btn-retry" onclick="openModule(${state.currentModule})">Review Lesson</button>
+          ${pass && allDone
+            ? `<button class="btn-continue" onclick="show('cert')">🏆 Get Certificate</button>`
+            : pass && state.currentModule < MODULES.length - 1
+            ? `<button class="btn-continue" onclick="openModule(${state.currentModule + 1})">Next Module →</button>`
+            : pass
+            ? `<button class="btn-continue" onclick="show('map')">Course Map</button>`
+            : ''
+          }
+        </div>
+      </div>
+    </div>
+  `;
+  updateHeader();
+  buildMap();
+}
+
+// ═══════════════════════════════════════════════════════
+
+
+
+
+
+// ═══════════════════════════════════════════════════════
+// TEM LOGO — RANDOM ANIMATION ENGINE (10 styles)
+// ═══════════════════════════════════════════════════════
+(function() {
+
+  // ── Colour palettes per variant
+  const PALETTES = [
+    { bg:'rgba(0,112,224,0.08)', outer:'rgba(0,112,224,0.5)', inner:'rgba(0,112,224,0.2)', t:'#0070e0', e:'#f05a00', m:'#0070e0' },
+    { bg:'rgba(240,90,0,0.08)',  outer:'rgba(240,90,0,0.5)',  inner:'rgba(240,90,0,0.2)',  t:'#f05a00', e:'#0070e0', m:'#f05a00' },
+    { bg:'rgba(124,58,237,0.08)',outer:'rgba(124,58,237,0.5)',inner:'rgba(124,58,237,0.2)',t:'#7c3aed', e:'#f05a00', m:'#0070e0' },
+    { bg:'rgba(0,168,79,0.08)',  outer:'rgba(0,168,79,0.5)',  inner:'rgba(0,168,79,0.2)',  t:'#00a84f', e:'#0070e0', m:'#f05a00' },
+    { bg:'rgba(217,43,58,0.08)', outer:'rgba(217,43,58,0.5)', inner:'rgba(0,112,224,0.2)', t:'#d92b3a', e:'#0070e0', m:'#d92b3a' },
+    { bg:'rgba(0,112,224,0.06)', outer:'rgba(0,112,224,0.3)', inner:'rgba(240,90,0,0.3)',  t:'#0050b0', e:'#c04000', m:'#0050b0' },
+    { bg:'rgba(200,134,10,0.08)',outer:'rgba(200,134,10,0.6)',inner:'rgba(200,134,10,0.2)',t:'#c8860a', e:'#0070e0', m:'#c8860a' },
+    { bg:'rgba(0,160,200,0.08)', outer:'rgba(0,160,200,0.5)', inner:'rgba(0,160,200,0.2)', t:'#0090c8', e:'#f05a00', m:'#0070e0' },
+    { bg:'rgba(240,90,0,0.06)',  outer:'rgba(240,90,0,0.4)',  inner:'rgba(0,112,224,0.3)', t:'#0070e0', e:'#f05a00', m:'#7c3aed' },
+    { bg:'linear-gradient(135deg,rgba(0,112,224,0.1),rgba(240,90,0,0.1))', outer:'rgba(0,112,224,0.4)', inner:'rgba(240,90,0,0.25)', t:'#0070e0', e:'#7c3aed', m:'#f05a00' },
+  ];
+
+  // ── 10 animation styles
+  const STYLES = [
+
+    // 0. Pulse ring — soft glow pulses outward
+    function(badge, outer, inner, bg, pal) {
+      badge.style.animation = 'tem-pulse 2.4s ease infinite';
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '8px';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '8px';
+    },
+
+    // 1. Spinning outer ring with counter inner
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px dashed ${pal.outer}`;
+      outer.style.borderRadius = '50%';
+      outer.style.animation = 'tem-ring-spin 4s linear infinite';
+      inner.style.border = `1px solid ${pal.inner}`;
+      inner.style.borderRadius = '50%';
+      inner.style.animation = 'tem-ring-spin-r 3s linear infinite';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '50%';
+      badge.style.borderRadius = '50%';
+    },
+
+    // 2. Morphing border-radius shape-shift
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.animation = 'tem-morph 3.5s ease infinite';
+      bg.style.background = pal.bg;
+      bg.style.animation = 'tem-morph 3.5s ease infinite';
+      badge.style.animation = 'tem-morph 3.5s ease infinite';
+    },
+
+    // 3. Glitch — letters stagger with displacement
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '4px';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '4px';
+      badge.style.animation = 'tem-shake 2s ease infinite';
+      // stagger letter colours
+      const t=document.getElementById('tem-t'), e=document.getElementById('tem-e'), m=document.getElementById('tem-m');
+      if(t){t.style.animation='tem-flicker 3s ease infinite';t.style.animationDelay='0s';}
+      if(e){e.style.animation='tem-flicker 3s ease infinite';e.style.animationDelay='0.4s';}
+      if(m){m.style.animation='tem-flicker 3s ease infinite';m.style.animationDelay='0.8s';}
+    },
+
+    // 4. Float up-down
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '10px';
+      outer.style.boxShadow = `0 4px 14px ${pal.outer}55`;
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '10px';
+      badge.style.animation = 'tem-float 2.8s ease infinite';
+    },
+
+    // 5. Breathe scale
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '8px';
+      inner.style.border = `1px solid ${pal.inner}`;
+      inner.style.borderRadius = '6px';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '8px';
+      badge.style.animation = 'tem-breathe 2.2s ease infinite';
+      badge.style.transformOrigin = 'center';
+    },
+
+    // 6. Neon box with flicker
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '6px';
+      outer.style.boxShadow = `0 0 8px ${pal.outer}, 0 0 18px ${pal.outer}44, inset 0 0 6px ${pal.outer}22`;
+      outer.style.animation = 'tem-flicker 4s ease infinite';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '6px';
+    },
+
+    // 7. Rotating diagonal gradient border (conic)
+    function(badge, outer, inner, bg, pal) {
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '8px';
+      // Use a spinning conic gradient overlay
+      outer.style.background = `conic-gradient(${pal.outer}, transparent, ${pal.outer})`;
+      outer.style.borderRadius = '9px';
+      outer.style.inset = '-1px';
+      outer.style.padding = '2px';
+      outer.style.animation = 'tem-ring-spin 3s linear infinite';
+      // mask the inside
+      bg.style.zIndex = '1';
+    },
+
+    // 8. Bounce physics
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '8px';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '8px';
+      badge.style.animation = 'tem-bounce 1.8s cubic-bezier(0.36,0.07,0.19,0.97) infinite';
+      badge.style.transformOrigin = 'center bottom';
+    },
+
+    // 9. Split-letters stagger wave
+    function(badge, outer, inner, bg, pal) {
+      outer.style.border = `2px solid ${pal.outer}`;
+      outer.style.borderRadius = '8px';
+      bg.style.background = pal.bg;
+      bg.style.borderRadius = '8px';
+      // Each letter floats independently
+      const t=document.getElementById('tem-t'), e=document.getElementById('tem-e'), m=document.getElementById('tem-m');
+      const kf = 'tem-float';
+      if(t){t.style.display='inline-block';t.style.animation=`${kf} 2s ease infinite`;t.style.animationDelay='0s';}
+      if(e){e.style.display='inline-block';e.style.animation=`${kf} 2s ease infinite`;e.style.animationDelay='0.3s';}
+      if(m){m.style.display='inline-block';m.style.animation=`${kf} 2s ease infinite`;m.style.animationDelay='0.6s';}
+    },
+  ];
+
+  // ── Pick a random variant on every load
+  function applyRandomLogo() {
+    const badge  = document.getElementById('tem-badge');
+    const outer  = document.getElementById('tem-ring-outer');
+    const inner  = document.getElementById('tem-ring-inner');
+    const bg     = document.getElementById('tem-bg');
+    if (!badge || !outer || !bg) return;
+
+    const idx = Math.floor(Math.random() * STYLES.length);
+    const pal = PALETTES[idx];
+
+    // Apply palette colours to letters
+    const t = document.getElementById('tem-t');
+    const e = document.getElementById('tem-e');
+    const m = document.getElementById('tem-m');
+    if (t) t.style.color = pal.t;
+    if (e) e.style.color = pal.e;
+    if (m) m.style.color = pal.m;
+
+    // Apply the chosen style
+    STYLES[idx](badge, outer, inner, bg, pal);
+
+    // Letter entrance animation on first load
+    [t, e, m].forEach((el, i) => {
+      if (!el) return;
+      el.style.opacity = '0';
+      el.style.animation = (el.style.animation ? el.style.animation + ', ' : '') +
+        `tem-letter-in 0.5s ease forwards`;
+      el.style.animationDelay = (el.style.animationDelay ? el.style.animationDelay + ', ' : '') +
+        `${i * 0.12}s`;
+    });
+
+  }
+
+  // Re-randomise on logo click (bonus)
+  window.addEventListener('DOMContentLoaded', () => {
+    applyRandomLogo();
+    const logo = document.querySelector('.te-logo');
+    if (logo) {
+      logo._clickCount = 0;
+      logo.addEventListener('click', () => {
+        logo._clickCount++;
+        if (logo._clickCount % 3 === 0) {
+          // Every 3rd click: re-randomise the logo before navigating
+          // Reset all inline styles first
+          ['tem-badge','tem-ring-outer','tem-ring-inner','tem-bg','tem-t','tem-e','tem-m'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.removeAttribute('style');
+          });
+          applyRandomLogo();
+        }
+      });
+    }
+  });
+
+})();
+
+// ═══════════════════════════════════════════════════════
+// CERTIFICATE CONFETTI + CANVAS ANIMATION
+// ═══════════════════════════════════════════════════════
+(function(){
+  const COLORS = [
+    '#ffd500','#ffec6e','#ff7a00','#0090ff','#00ccff',
+    '#2ee88a','#ffffff','#b060ff','#ff3a5c','#fffbe6'
+  ];
+
+  let particles = [];
+  let certCtx = null, certCanvas = null, rafId = null;
+
+  function initCertCanvas() {
+    certCanvas = document.getElementById('cert-canvas');
+    if (!certCanvas) return;
+    const inner = certCanvas.closest('.cert-inner');
+    if (!inner) return;
+    certCanvas.width = inner.offsetWidth;
+    certCanvas.height = inner.offsetHeight;
+    certCtx = certCanvas.getContext('2d');
+  }
+
+  function spawnBurst() {
+    particles = [];
+    const w = certCanvas.width, h = certCanvas.height;
+    // burst from top-centre
+    for (let i = 0; i < 200; i++) {
+      const angle = (Math.random() * Math.PI * 2);
+      const speed = 2 + Math.random() * 8;
+      const shape = Math.random() > 0.5 ? 'rect' : 'circle';
+      particles.push({
+        x: w / 2 + (Math.random() - 0.5) * 60,
+        y: h * 0.25,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 4,
+        gravity: 0.18 + Math.random() * 0.12,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        alpha: 1,
+        fade: 0.008 + Math.random() * 0.008,
+        rot: Math.random() * Math.PI * 2,
+        rotV: (Math.random() - 0.5) * 0.18,
+        w: 5 + Math.random() * 10,
+        h: 4 + Math.random() * 6,
+        shape,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleV: 0.08 + Math.random() * 0.06,
+      });
+    }
+    // side bursts
+    for (let side = 0; side < 2; side++) {
+      for (let i = 0; i < 80; i++) {
+        const sx = side === 0 ? w * 0.05 : w * 0.95;
+        const angle = side === 0
+          ? -Math.PI / 4 + Math.random() * Math.PI / 2
+          : Math.PI - Math.PI / 4 + Math.random() * Math.PI / 2;
+        const speed = 3 + Math.random() * 7;
+        particles.push({
+          x: sx, y: h * 0.4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          gravity: 0.15 + Math.random() * 0.1,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          alpha: 1, fade: 0.007 + Math.random() * 0.007,
+          rot: Math.random() * Math.PI * 2,
+          rotV: (Math.random() - 0.5) * 0.14,
+          w: 4 + Math.random() * 8, h: 3 + Math.random() * 5,
+          shape: Math.random() > 0.4 ? 'rect' : 'circle',
+          wobble: Math.random() * Math.PI * 2,
+          wobbleV: 0.07 + Math.random() * 0.05,
+        });
+      }
+    }
+  }
+
+  function drawParticle(p) {
+    certCtx.save();
+    certCtx.globalAlpha = Math.max(0, p.alpha);
+    certCtx.fillStyle = p.color;
+    certCtx.translate(p.x, p.y);
+    certCtx.rotate(p.rot);
+    if (p.shape === 'circle') {
+      certCtx.beginPath();
+      certCtx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+      certCtx.fill();
+    } else {
+      certCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    }
+    certCtx.restore();
+  }
+
+  function animateCert() {
+    if (!certCtx || !certCanvas) return;
+    certCtx.clearRect(0, 0, certCanvas.width, certCanvas.height);
+    let anyAlive = false;
+    particles.forEach(p => {
+      p.wobble += p.wobbleV;
+      p.vx += Math.sin(p.wobble) * 0.3;
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.rotV;
+      p.alpha -= p.fade;
+      drawParticle(p);
+      if (p.alpha > 0) anyAlive = true;
+    });
+    if (anyAlive) {
+      rafId = requestAnimationFrame(animateCert);
+    } else {
+      rafId = null;
+      certCtx.clearRect(0, 0, certCanvas.width, certCanvas.height);
+    }
+  }
+
+  // Expose launcher for the show() function to call
+  window.launchCertConfetti = function() {
+    // small delay so the view transition finishes first
+    setTimeout(() => {
+      initCertCanvas();
+      if (!certCanvas) return;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      spawnBurst();
+      animateCert();
+    }, 350);
+  };
+
+  // Resize
+  window.addEventListener('resize', () => {
+    if (!certCanvas) return;
+    const inner = certCanvas.closest('.cert-inner');
+    if (!inner) return;
+    certCanvas.width = inner.offsetWidth;
+    certCanvas.height = inner.offsetHeight;
+  });
+})();
+
+// INITIALISE
+// ═══════════════════════════════════════════════════════
+document.getElementById('cta-back-btn').onclick = () => show('map');
+document.getElementById('cta-quiz-btn').onclick = () => startQuiz();
+buildMap();
+updateHeader();
+show('home');
+
+
+// ═══════════════════════════════════════════════════════
+// DYNAMIC ANIMATION ENGINE
+// ═══════════════════════════════════════════════════════
+(function() {
+
+  // ── 1. IntersectionObserver scroll-reveal
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  function observeReveals(root) {
+    root.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el => {
+      revealObserver.observe(el);
+    });
+  }
+
+  // ── 2. Auto-tag lesson elements for reveal
+  function tagLessonContent(container) {
+    if (!container) return;
+
+    // Paragraphs inside ls-body
+    container.querySelectorAll('.ls-body').forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i * 0.06) + 's';
+    });
+
+    // ic cards — stagger within each g3/g4 grid
+    container.querySelectorAll('.g3, .g4, .g2').forEach(grid => {
+      grid.classList.add('stagger');
+      grid.querySelectorAll('.ic').forEach((card, i) => {
+        card.classList.add('reveal-scale');
+        card.style.transitionDelay = (i * 0.08) + 's';
+      });
+    });
+
+    // Step items
+    container.querySelectorAll('.step-item').forEach((el, i) => {
+      el.classList.add('reveal-left');
+      el.style.transitionDelay = (i * 0.07) + 's';
+    });
+
+    // feat-rows
+    container.querySelectorAll('.feat-row').forEach((el, i) => {
+      el.classList.add('reveal-left');
+      el.style.transitionDelay = (i * 0.05) + 's';
+    });
+
+    // kp-items
+    container.querySelectorAll('.kp-item').forEach((el, i) => {
+      el.classList.add('reveal-left');
+      el.style.transitionDelay = (i * 0.06) + 's';
+    });
+
+    // flow-chain nodes
+    container.querySelectorAll('.fc-node').forEach((el, i) => {
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (i * 0.08) + 's';
+    });
+
+    // table rows
+    container.querySelectorAll('.ctbl tbody tr').forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i * 0.06) + 's';
+    });
+
+    // key-points
+    container.querySelectorAll('.key-points').forEach(el => {
+      el.classList.add('reveal');
+    });
+
+    // wave areas
+    container.querySelectorAll('.wave-area, .code-block').forEach(el => {
+      el.classList.add('reveal');
+    });
+
+    // lesson sections themselves
+    container.querySelectorAll('.lesson-section').forEach((el, i) => {
+      // already handled by CSS, but add js-driven for dynamic content
+    });
+
+    observeReveals(container);
+  }
+
+  // ── 3. Patch openModule to tag content after injection
+  const _origOpen = window.openModule;
+  if (typeof _origOpen === 'function') {
+    window.openModule = function(id) {
+      _origOpen(id);
+      // After DOM is updated (next tick)
+      setTimeout(() => {
+        const mc = document.getElementById('module-content');
+        if (mc) tagLessonContent(mc);
+      }, 80);
+    };
+  }
+
+  // ── 4. Number counter animation
+  function animateCount(el, target, duration, suffix) {
+    const start = performance.now();
+    const from = 0;
+    suffix = suffix || '';
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(from + (target - from) * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Animate hero stats
+  function animateHeroStats() {
+    const targets = [
+      { sel: '.hero-stats .stat:nth-child(1) .stat-num', val: 10,  sfx: '' },
+      { sel: '.hero-stats .stat:nth-child(2) .stat-num', val: 7,   sfx: '' },
+      { sel: '.hero-stats .stat:nth-child(3) .stat-num', val: 60,  sfx: '+' },
+      { sel: '.hero-stats .stat:nth-child(4) .stat-num', val: 40,  sfx: '' },
+    ];
+    targets.forEach(({ sel, val, sfx }, i) => {
+      setTimeout(() => {
+        const el = document.querySelector(sel);
+        if (el) animateCount(el, val, 900, sfx);
+      }, 600 + i * 120);
+    });
+  }
+
+  // Animate cert stats
+  function animateCertStats() {
+    const targets = [
+      { sel: '.cert-stat:nth-child(1) .cert-stat-num', val: 10,   sfx: '' },
+      { sel: '.cert-stat:nth-child(2) .cert-stat-num', val: 40,   sfx: '+' },
+      { sel: '.cert-stat:nth-child(3) .cert-stat-num', val: 7,    sfx: '' },
+      { sel: '.cert-stat:nth-child(4) .cert-stat-num', val: 1000, sfx: '' },
+    ];
+    targets.forEach(({ sel, val, sfx }, i) => {
+      setTimeout(() => {
+        const el = document.querySelector(sel);
+        if (el) animateCount(el, val, 1200, sfx);
+      }, 400 + i * 180);
+    });
+  }
+
+  // Score ring fill animation
+  function animateScoreRing(pct, pass) {
+    const ring = document.querySelector('.score-ring');
+    if (!ring) return;
+    const col = pass ? 'var(--green)' : 'var(--red)';
+    const bg  = pass ? 'rgba(0,168,79,0.08)' : 'rgba(217,43,58,0.08)';
+    let deg = 0;
+    const target = pct * 3.6;
+    const dur = 900;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      deg = target * eased;
+      ring.style.background = `conic-gradient(${col} ${deg}deg, ${bg} 0deg)`;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ── 5. Patch renderScore to animate ring
+  const _origRenderScore = window.renderScore;
+  // We'll hook via MutationObserver on quiz area instead
+  const quizAreaObserver = new MutationObserver(() => {
+    const ring = document.querySelector('.score-ring');
+    if (ring && !ring._animated) {
+      ring._animated = true;
+      const numEl = ring.querySelector('.score-num');
+      if (!numEl) return;
+      const parts = numEl.textContent.split('/');
+      if (parts.length < 2) return;
+      const s = parseInt(parts[0]), t = parseInt(parts[1]);
+      const pct = Math.round(s / t * 100);
+      setTimeout(() => animateScoreRing(pct, pct >= 60), 200);
+    }
+  });
+  const qa = document.getElementById('quiz-area');
+  if (qa) quizAreaObserver.observe(qa, { childList: true, subtree: true });
+
+  // ── 6. Map card hover ripple
+  document.addEventListener('click', function(e) {
+    const card = e.target.closest('.mcard:not(.mlocked)');
+    if (!card) return;
+    const ripple = document.createElement('span');
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.5;
+    ripple.style.cssText = `
+      position:absolute;border-radius:50%;pointer-events:none;z-index:99;
+      width:${size}px;height:${size}px;
+      left:${e.clientX - rect.left - size/2}px;
+      top:${e.clientY - rect.top - size/2}px;
+      background:rgba(0,112,224,0.12);
+      transform:scale(0);
+      animation:rippleOut .5s ease forwards;
+    `;
+    // Add keyframe if not present
+    if (!document.getElementById('ripple-style')) {
+      const s = document.createElement('style');
+      s.id = 'ripple-style';
+      s.textContent = '@keyframes rippleOut{to{transform:scale(1);opacity:0;}}';
+      document.head.appendChild(s);
+    }
+    card.style.overflow = 'hidden';
+    card.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+  });
+
+  // ── 7. Floating particles on quiz options (correct answer)
+  function burstOnCorrect(optEl) {
+    const rect = optEl.getBoundingClientRect();
+    const colors = ['#00a84f','#0070e0','#ffd500'];
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      const angle = (i / 12) * Math.PI * 2;
+      const speed = 40 + Math.random() * 50;
+      p.style.cssText = `
+        position:fixed;z-index:9999;pointer-events:none;
+        width:6px;height:6px;border-radius:50%;
+        background:${colors[i % 3]};
+        left:${rect.left + rect.width/2}px;
+        top:${rect.top + rect.height/2}px;
+        transition:transform .6s ease, opacity .6s ease;
+        opacity:1;
+      `;
+      document.body.appendChild(p);
+      requestAnimationFrame(() => {
+        p.style.transform = `translate(${Math.cos(angle)*speed}px,${Math.sin(angle)*speed - 30}px) scale(0)`;
+        p.style.opacity = '0';
+      });
+      setTimeout(() => p.remove(), 650);
+    }
+  }
+
+  // Hook qopt clicks for burst effect
+  document.addEventListener('click', function(e) {
+    const opt = e.target.closest('.qopt:not(.locked)');
+    if (!opt) return;
+    setTimeout(() => {
+      if (opt.classList.contains('correct')) burstOnCorrect(opt);
+    }, 50);
+  });
+
+  // ── 8. Smooth section transitions — add typewriter to map title
+  function initMapAnimations() {
+    const title = document.querySelector('.map-title');
+    if (title && !title._typed) {
+      title._typed = true;
+      // already animated by CSS underline
+    }
+    // Animate tier mcard entrances
+    document.querySelectorAll('.mcard').forEach((card, i) => {
+      card.style.animation = `cardSlideIn .4s ${0.04 + i*0.05}s ease both`;
+    });
+  }
+
+  // ── 9. Hook show() to trigger specific animations per view
+  const _origShow = window.show;
+  if (typeof _origShow === 'function') {
+    window.show = function(view) {
+      _origShow(view);
+      if (view === 'home') {
+        setTimeout(animateHeroStats, 300);
+      }
+      if (view === 'map') {
+        setTimeout(initMapAnimations, 100);
+      }
+      if (view === 'cert') {
+        setTimeout(animateCertStats, 500);
+      }
+    };
+  }
+
+  // ── 10. Typing effect for ls-head text (on page reveal)
+  function typewriterOnce(el) {
+    if (el._typed) return;
+    el._typed = true;
+    const full = el.getAttribute('data-text') || el.childNodes[0]?.textContent || '';
+    if (!full.trim()) return;
+    const beforeEl = el.querySelector('::before');
+    // Simpler: just animate opacity of words
+    el.style.opacity = '0';
+    setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '1'; }, 100);
+  }
+
+  // ── 11. init on DOMContentLoaded
+  window.addEventListener('DOMContentLoaded', () => {
+    // Hero stats on first load
+    setTimeout(animateHeroStats, 800);
+
+    // Tag static elements
+    observeReveals(document.body);
+
+    // Qopt hover glow
+    document.addEventListener('mousemove', function(e) {
+      const opt = e.target.closest('.qopt:not(.locked)');
+      if (opt) {
+        const rect = opt.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+        const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+        opt.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0,112,224,0.1) 0%, #f8fafd 70%)`;
+      } else {
+        document.querySelectorAll('.qopt').forEach(o => o.style.background = '');
+      }
+    });
+  });
+
+})();
+
+
+// ═══════════════════════════════════════════════════════
+// CERTIFICATE PRINT FUNCTION
+// ═══════════════════════════════════════════════════════
+function printCertificate() {
+  // 1. Force cert view visible
+  const allViews = document.querySelectorAll('.view');
+  const certView = document.getElementById('v-cert');
+  const cta      = document.getElementById('quiz-cta');
+  const header   = document.querySelector('header');
+  const canvas   = document.getElementById('bg');
+
+  // Stash original styles
+  const stash = [];
+  allViews.forEach(v => {
+    stash.push({ el: v, display: v.style.display, opacity: v.style.opacity, position: v.style.position, pointerEvents: v.style.pointerEvents });
+    if (v !== certView) {
+      v.style.display = 'none';
+    } else {
+      v.style.position = 'static';
+      v.style.opacity  = '1';
+      v.style.display  = 'block';
+      v.style.pointerEvents = 'all';
+    }
+  });
+
+  // Hide header, CTA, canvas during print
+  const hdrOld = header   ? header.style.display : null;
+  const ctaOld = cta      ? cta.style.display    : null;
+  const bgOld  = canvas   ? canvas.style.display : null;
+  if (header) header.style.display = 'none';
+  if (cta)    cta.style.display    = 'none';
+  if (canvas) canvas.style.display = 'none';
+
+  // Hide cert buttons during print
+  const btns = document.querySelector('.cert-btns');
+  const btnsOld = btns ? btns.style.display : null;
+  if (btns) btns.style.display = 'none';
+
+  // 2. Temporarily make main/app overflow visible
+  const mainEl = document.querySelector('main');
+  const appEl  = document.getElementById('app');
+  const mainOldOverflow = mainEl ? mainEl.style.overflow : null;
+  const appOldOverflow  = appEl  ? appEl.style.overflow  : null;
+  const appOldHeight    = appEl  ? appEl.style.height    : null;
+  if (mainEl) mainEl.style.overflow = 'visible';
+  if (appEl)  { appEl.style.overflow = 'visible'; appEl.style.height = 'auto'; }
+
+  // 3. Print
+  setTimeout(() => {
+    window.print();
+
+    // 4. Restore everything after print dialog closes
+    setTimeout(() => {
+      stash.forEach(({ el, display, opacity, position, pointerEvents }) => {
+        el.style.display       = display;
+        el.style.opacity       = opacity;
+        el.style.position      = position;
+        el.style.pointerEvents = pointerEvents;
+      });
+      if (header) header.style.display = hdrOld;
+      if (cta)    cta.style.display    = ctaOld;
+      if (canvas) canvas.style.display = bgOld;
+      if (btns)   btns.style.display   = btnsOld;
+      if (mainEl) mainEl.style.overflow = mainOldOverflow;
+      if (appEl)  { appEl.style.overflow = appOldOverflow; appEl.style.height = appOldHeight; }
+    }, 800);
+  }, 120);
+}
+
+// Wire the print button after DOM ready
+window.addEventListener('DOMContentLoaded', () => {
+  const printBtn = document.getElementById('cert-print-btn');
+  if (printBtn) printBtn.addEventListener('click', printCertificate);
+});
+
+</script>
+</body>
+</html>
